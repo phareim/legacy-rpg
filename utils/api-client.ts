@@ -1,5 +1,3 @@
-import { mockPlaces } from './mock-data'
-
 export class APIClient {
   static async processCommand(command: string, userId: string): Promise<{ response: string } | { error: string }> {
     // Simple command processing logic

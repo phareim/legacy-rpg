@@ -3,13 +3,13 @@
 import { ref, onMounted } from 'vue'
 
 interface Props {
-  characterId: string,
+  name: string,
   active: boolean
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<{
-  (e: 'click', characterId: string): void,
+  (e: 'click', name: string): void,
   (e: 'action', command: string): void
 }>()
 
@@ -22,7 +22,7 @@ async function fetchCharacter() {
   try {
     // TBD: this is a dummy character
     character.value = {
-      name: "The Dude",
+      name: props.name,
       description: 'A mysterious character...',
       type: 'npc',
       properties: {
@@ -35,9 +35,24 @@ async function fetchCharacter() {
       },
       actions: [
         {
-          name: 'Talk',
-          description: 'Talk to the character',
-          type: 'talk'
+          name: 'Talk to',
+          emoji: '💬',
+          description: 'Talk to the character'        
+        },
+        {
+          name: 'Examine',
+          emoji: '👀',
+          description: 'Examine the character'
+        },
+        {
+          name: 'Trade with',
+          emoji: '🛍️',
+          description: 'Trade with the character'
+        },
+        {
+          name: 'Attack',
+          emoji: '💥',
+          description: 'Attack the character'
         }
       ],
       createdAt: new Date(),
@@ -67,18 +82,7 @@ const handleAction = (action: string) => {
 // Get available actions based on character type
 const availableActions = computed(() => {
   if (!character.value) return []
-  
-  const actions = [
-    { emoji: '👀', command: 'examine', label: 'Examine' },
-    { emoji: '💬', command: 'talk to', label: 'Talk to' }
-  ]
-
-  // Add type-specific actions
-  if (character.value.type === 'merchant') {
-    actions.push({ emoji: '🛍️', command: 'trade with', label: 'Trade' })
-  }
-
-  return actions
+  return character.value.actions
 })
 </script>
 
@@ -90,10 +94,10 @@ const availableActions = computed(() => {
       <span v-if="showActions" class="actions">
         <button 
           v-for="action in availableActions" 
-          :key="action.command"
+          :key="action.name"
           class="action-btn"
           :title="action.label"
-          @click.stop="handleAction(action.command)"
+          @click.stop="handleAction(action.name)"
         >
           {{ action.emoji }}
         </button>

@@ -84,7 +84,7 @@ const handleAction = (command: string) => {
         <!-- Items -->
         <InlineItem
           v-else-if="segment.type === 'item'"
-          :itemId="segment.content"
+          :name="segment.content"
           :active="props.active"
           @click="handleItemClick"
           @action="handleAction"
@@ -93,7 +93,7 @@ const handleAction = (command: string) => {
         <!-- Characters -->
         <InlineCharacter
           v-else-if="segment.type === 'character'"
-          :characterId="segment.content"
+          :name="segment.content"
           :active="props.active"
           @click="handleCharacterClick"
           @action="handleAction"
@@ -102,7 +102,7 @@ const handleAction = (command: string) => {
         <!-- Places -->
         <InlinePlace
           v-else-if="segment.type === 'place'"
-          :placeId="segment.content"
+          :name="segment.content"
           :active="props.active"
           @click="handlePlaceClick"
           @action="handleAction"

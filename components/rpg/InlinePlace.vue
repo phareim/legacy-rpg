@@ -3,13 +3,13 @@
 import { ref, onMounted } from 'vue'
 
 interface Props {
-  placeId: string,
+  name: string,
   active: boolean
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<{
-  (e: 'click', placeId: string): void,
+  (e: 'click', name: string): void,
   (e: 'action', command: string): void
 }>()
 
@@ -22,12 +22,30 @@ async function fetchPlace() {
   try {
     // TBD
     place.value = {
-      id: props.placeId,
-      name: props.placeId,
-      description: 'A mysterious place...',
+      name: props.name,
+      description: 'The pond looks clean and inviting.',
       type: 'location',
+      properties: {},
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      actions: [
+        {
+          name: 'Examine',
+          emoji: '👀',
+          description: 'Examine the place'
+        },
+        {
+          name: 'Go to',
+          emoji: '🚶',
+          description: 'Go to the place'
+        },
+        {
+          name: 'Take a bath in',
+          emoji: '🛁',
+          description: 'Take a bath'
+        },
+        
+      ]
     } 
   } finally {
     isLoading.value = false
@@ -52,20 +70,7 @@ const handleAction = (action: string) => {
 // Get available actions based on place type
 const availableActions = computed(() => {
   if (!place.value) return []
-  
-  const actions = [
-    { emoji: '👀', command: 'examine', label: 'Examine' },
-    { emoji: '🚶', command: 'go to', label: 'Go to' }
-  ]
-
-  // Add type-specific actions
-  if (place.value.type === 'shop') {
-    actions.push({ emoji: '🛍️', command: 'enter', label: 'Enter Shop' })
-  } else if (place.value.type === 'dungeon') {
-    actions.push({ emoji: '⚔️', command: 'enter', label: 'Enter Dungeon' })
-  }
-
-  return actions
+  return place.value.actions
 })
 </script>
 
@@ -77,10 +82,10 @@ const availableActions = computed(() => {
       <span v-if="showActions" class="actions">
         <button 
           v-for="action in availableActions" 
-          :key="action.command"
+          :key="action.name"
           class="action-btn"
           :title="action.label"
-          @click.stop="handleAction(action.command)"
+          @click.stop="handleAction(action.name)"
         >
           {{ action.emoji }}
         </button>

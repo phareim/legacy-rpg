@@ -3,13 +3,13 @@
 import { ref, onMounted, computed } from 'vue'
 
 interface Props {
-  itemId: string,
+  name: string,
   active: boolean
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<{
-  (e: 'click', itemId: string): void,
+  (e: 'click', name: string): void,
   (e: 'action', command: string): void
 }>()
 
@@ -22,7 +22,7 @@ async function fetchItem() {
   try {
     // TBD
     item.value = {
-      name: "an old knife",
+      name: props.name,
       description: 'A mysterious item...',
       type: 'misc',
       properties: {},
@@ -97,10 +97,10 @@ const availableActions = computed(() => {
       <span v-if="showActions" class="actions">
         <button 
           v-for="action in availableActions" 
-          :key="action.command"
+          :key="action.name"
           class="action-btn"
           :title="action.label"
-          @click.stop="handleAction(action.command)"
+          @click.stop="handleAction(action.name)"
         >
           {{ action.emoji }}
         </button>

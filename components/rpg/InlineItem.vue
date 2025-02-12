@@ -22,13 +22,45 @@ async function fetchItem() {
   try {
     // TBD
     item.value = {
-      id: props.itemId,
-      name: props.itemId,
+      name: "an old knife",
       description: 'A mysterious item...',
       type: 'misc',
       properties: {},
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      actions: [
+        {
+          name: 'Take',
+          emoji: '🤚',
+          description: 'Take the item'
+        }, 
+        {
+          name: 'Examine',
+          emoji: '👀',
+          description: 'Examine the item'
+        },
+        {
+          name: 'Use',
+          emoji: '🔧',
+          description: 'Use the item'
+        },
+        {
+          name: 'Equip',
+          emoji: '🛡️',
+          description: 'Equip the item'
+        },
+        {
+          name: 'Unequip',
+          emoji: '🔓',
+          description: 'Unequip the item'
+        },
+        {
+          name: 'Drop',
+          emoji: '💦',
+          description: 'Drop the item'
+        },
+        
+      ]
     }
   } finally {
     isLoading.value = false
@@ -53,32 +85,7 @@ const handleAction = (action: string) => {
 // Get available actions based on item type
 const availableActions = computed(() => {
   if (!item.value) return []
-  
-  const actions = [
-    { emoji: '👀', command: 'examine', label: 'Examine' },
-    { emoji: '🤚', command: 'take', label: 'Take' }
-  ]
-
-  // Add type-specific actions
-  switch (item.value.type) {
-    case 'weapon':
-      actions.push({ emoji: '⚔️', command: 'equip', label: 'Equip' })
-      break
-    case 'armor':
-      actions.push({ emoji: '🛡️', command: 'wear', label: 'Wear' })
-      break
-    case 'potion':
-      actions.push({ emoji: '🧪', command: 'drink', label: 'Drink' })
-      break
-    case 'tool':
-      actions.push({ emoji: '🔧', command: 'use', label: 'Use' })
-      break
-    case 'key':
-      actions.push({ emoji: '🔑', command: 'use', label: 'Use' })
-      break
-  }
-
-  return actions
+  return item.value.actions 
 })
 </script>
 

@@ -20,25 +20,30 @@ const showActions = ref(false)
 // Fetch character data from Firebase
 async function fetchCharacter() {
   try {
-    // TBD
+    // TBD: this is a dummy character
     character.value = {
-      id: "DUMMY",
       name: "The Dude",
       description: 'A mysterious character...',
       type: 'npc',
+      properties: {
+        location: 'Forest',
+        inventory: ['Sword', 'Shield'],
+        health: 100,
+        maxHealth: 100,
+        level: 1,
+        experience: 0
+      },
+      actions: [
+        {
+          name: 'Talk',
+          description: 'Talk to the character',
+          type: 'talk'
+        }
+      ],
       createdAt: new Date(),
       updatedAt: new Date()
     }
-  } catch (error) {
-    console.error('Error fetching character:', error)
-    character.value = {
-      id: props.characterId,
-      name: props.characterId,
-      description: 'A mysterious character...',
-      type: 'npc',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
+  
   } finally {
     isLoading.value = false
   }

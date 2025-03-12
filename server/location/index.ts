@@ -1,4 +1,6 @@
 import OpenAI from 'openai'
+import type { Location } from '~/types/generics'
+import type { ChatCompletionCreateParams } from 'openai/resources'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -30,3 +32,88 @@ When describing a location:
 - Use short but descriptive names for places
 - Include the stored description but feel free to add atmospheric details
 - Consider the surrounding areas for context when generating new locations`
+
+export default defineEventHandler(async (event) => {
+  const query = getQuery(event)
+  const { north, west } = query
+
+  if (!north || !west) {
+    throw createError({
+      statusCode: 400,
+      message: 'Missing coordinates (north, west)'
+    })
+  }
+
+  // Create a message to OpenAI that asks for a location description
+  const messages: ChatCompletionCreateParams['messages'] = [
+    { role: 'system' as const, content: SYSTEM_PROMPT },
+    { 
+      role: 'user' as const, 
+      content: `Generate a name and description for a location at coordinates N:${north}, W:${west}. 
+      Return it in the following JSON format:
+      {
+        "name": "short but evocative name",
+        "description": "atmospheric description following the formatting rules"
+      }
+      The description should include at least one item, character, or connected location using the proper formatting.`
+    }
+  ]
+
+  try {
+    // Send to OpenAI
+    const completion = await openai.chat.completions.create({
+      model:  "llama-3.2-3b",//"llama-3.1-405b",
+      messages,
+      temperature: 0.8,
+      max_tokens: 1000,
+      response_format: { type: "json_object" }
+    })
+
+    const response = completion.choices[0]?.message?.content
+    if (!response) {
+      throw new Error('No response from OpenAI')
+    }
+
+    const locationData = JSON.parse(response)
+
+    // Create the full location object
+    const location: Location = {
+      coordinates: {
+        north: Number(north),
+        west: Number(west)
+      },
+      name: locationData.name,
+      description: locationData.description,
+      type: 'location', // Default type, could be made dynamic based on description
+      connections: [], // These would be filled in by the game logic
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      legacy: false,
+      properties: {
+        explored: false,
+        danger_level: Math.floor(Math.random() * 5) + 1
+      }
+    }
+
+    return location
+  } catch (error) {
+    console.error('Error generating location:', error)
+    throw createError({
+      statusCode: 500,
+      message: 'Failed to generate location'
+    })
+  }
+})
+
+/*
+ * Sending to the LLM, works as follows:
+ *   // Send to Venice/OpenAI
+ *   const completion = await openai.chat.completions.create({
+ *       model: "llama-3.1-405b",
+ *       messages: messageHistory,
+ *       temperature: 0.8,
+ *       max_tokens: 1000
+ *   })
+ *   // Get response
+ *   const response = completion.choices[0]?.message?.content || 'Sorry, I did not understand that.' 
+ */

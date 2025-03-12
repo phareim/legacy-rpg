@@ -1,6 +1,7 @@
 <!-- InlineItem.vue -->
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useNuxtApp } from '#app'
 
 interface Props {
   name: string,
@@ -13,6 +14,7 @@ const emit = defineEmits<{
   (e: 'action', command: string): void
 }>()
 
+const { $firebase } = useNuxtApp()
 const item = ref<any>(null)
 const isLoading = ref(true)
 const showActions = ref(false)
@@ -20,47 +22,34 @@ const showActions = ref(false)
 // Fetch item data from Firebase
 async function fetchItem() {
   try {
-    // TBD
-    item.value = {
-      name: props.name,
-      description: 'A mysterious item...',
-      type: 'misc',
-      properties: {},
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      actions: [
-        {
-          name: 'Take',
-          emoji: '🤚',
-          description: 'Take the item'
-        }, 
-        {
-          name: 'Examine',
-          emoji: '👀',
-          description: 'Examine the item'
-        },
-        {
-          name: 'Use',
-          emoji: '🔧',
-          description: 'Use the item'
-        },
-        {
-          name: 'Equip',
-          emoji: '🛡️',
-          description: 'Equip the item'
-        },
-        {
-          name: 'Unequip',
-          emoji: '🔓',
-          description: 'Unequip the item'
-        },
-        {
-          name: 'Drop',
-          emoji: '💦',
-          description: 'Drop the item'
-        },
-        
-      ]
+    item.value = await $firebase.getItemByName(props.name);
+    if (!item.value) {
+      // Fallback if item not found in data
+      item.value = {
+        name: props.name,
+        description: 'A mysterious item...',
+        type: 'misc',
+        properties: {},
+        actions: [
+          {
+            name: 'Take',
+            emoji: '🤚',
+            description: 'Take the item'
+          }, 
+          {
+            name: 'Examine',
+            emoji: '👀',
+            description: 'Examine the item'
+          },
+          {
+            name: 'Use',
+            emoji: '🔧',
+            description: 'Use the item'
+          }
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
     }
   } finally {
     isLoading.value = false
@@ -85,7 +74,7 @@ const handleAction = (action: string) => {
 // Get available actions based on item type
 const availableActions = computed(() => {
   if (!item.value) return []
-  return item.value.actions 
+  return item.value.actions
 })
 </script>
 
@@ -99,7 +88,7 @@ const availableActions = computed(() => {
           v-for="action in availableActions" 
           :key="action.name"
           class="action-btn"
-          :title="action.label"
+          :title="action.description"
           @click.stop="handleAction(action.name)"
         >
           {{ action.emoji }}

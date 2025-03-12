@@ -1,6 +1,7 @@
 <!-- InlineCharacter.vue -->
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useNuxtApp } from '#app'
 
 interface Props {
   name: string,
@@ -13,6 +14,7 @@ const emit = defineEmits<{
   (e: 'action', command: string): void
 }>()
 
+const { $firebase } = useNuxtApp()
 const character = ref<any | null>(null)
 const isLoading = ref(true)
 const showActions = ref(false)
@@ -20,45 +22,37 @@ const showActions = ref(false)
 // Fetch character data from Firebase
 async function fetchCharacter() {
   try {
-    // TBD: this is a dummy character
-    character.value = {
-      name: props.name,
-      description: 'A mysterious character...',
-      type: 'npc',
-      properties: {
-        location: 'Forest',
-        inventory: ['Sword', 'Shield'],
-        health: 100,
-        maxHealth: 100,
-        level: 1,
-        experience: 0
-      },
-      actions: [
-        {
-          name: 'Talk to',
-          emoji: '💬',
-          description: 'Talk to the character'        
+    character.value = await $firebase.getCharacterByName(props.name);
+    if (!character.value) {
+      // Fallback if character not found in data
+      character.value = {
+        name: props.name,
+        description: 'A mysterious character...',
+        type: 'npc',
+        properties: {
+          location: 'Unknown',
+          inventory: [],
+          health: 100,
+          maxHealth: 100,
+          level: 1,
+          experience: 0
         },
-        {
-          name: 'Examine',
-          emoji: '👀',
-          description: 'Examine the character'
-        },
-        {
-          name: 'Trade with',
-          emoji: '🛍️',
-          description: 'Trade with the character'
-        },
-        {
-          name: 'Attack',
-          emoji: '💥',
-          description: 'Attack the character'
-        }
-      ],
-      createdAt: new Date(),
-      updatedAt: new Date()
+        actions: [
+          {
+            name: 'Talk to',
+            emoji: '💬',
+            description: 'Talk to the character'        
+          },
+          {
+            name: 'Examine',
+            emoji: '👀',
+            description: 'Examine the character'
+          }
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
     }
-  
   } finally {
     isLoading.value = false
   }
@@ -96,7 +90,7 @@ const availableActions = computed(() => {
           v-for="action in availableActions" 
           :key="action.name"
           class="action-btn"
-          :title="action.label"
+          :title="action.description"
           @click.stop="handleAction(action.name)"
         >
           {{ action.emoji }}

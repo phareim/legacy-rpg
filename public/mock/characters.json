@@ -1,0 +1,101 @@
+[
+  {
+    "id": "oldman",
+    "name": "Old Man",
+    "description": "An elderly man with a long white beard and a wise gleam in his eyes.",
+    "type": "npc",
+    "properties": {
+      "location": "Village",
+      "inventory": ["Staff", "Book of Wisdom"],
+      "health": 50,
+      "maxHealth": 50,
+      "level": 3,
+      "experience": 0
+    },
+    "actions": [
+      {
+        "name": "Talk to",
+        "emoji": "💬",
+        "description": "Talk to the character"        
+      },
+      {
+        "name": "Examine",
+        "emoji": "👀",
+        "description": "Examine the character"
+      },
+      {
+        "name": "Trade with",
+        "emoji": "🛍️",
+        "description": "Trade with the character"
+      }
+    ],
+    "createdAt": "2023-01-01T00:00:00Z",
+    "updatedAt": "2023-01-01T00:00:00Z"
+  },
+  {
+    "id": "merchant",
+    "name": "Traveling Merchant",
+    "description": "A jovial merchant with all manner of exotic goods for sale.",
+    "type": "npc",
+    "properties": {
+      "location": "Crossroads",
+      "inventory": ["Various Trinkets", "Rare Spices", "Exotic Fabrics"],
+      "health": 75,
+      "maxHealth": 75,
+      "level": 2,
+      "experience": 0
+    },
+    "actions": [
+      {
+        "name": "Talk to",
+        "emoji": "💬",
+        "description": "Talk to the character"        
+      },
+      {
+        "name": "Examine",
+        "emoji": "👀",
+        "description": "Examine the character"
+      },
+      {
+        "name": "Trade with",
+        "emoji": "🛍️",
+        "description": "Trade with the character"
+      }
+    ],
+    "createdAt": "2023-01-01T00:00:00Z",
+    "updatedAt": "2023-01-01T00:00:00Z"
+  },
+  {
+    "id": "warrior",
+    "name": "Battle-Scarred Warrior",
+    "description": "A fearsome warrior with numerous scars and a battle-worn expression.",
+    "type": "npc",
+    "properties": {
+      "location": "Tavern",
+      "inventory": ["Great Sword", "Shield", "Battle Trophy"],
+      "health": 100,
+      "maxHealth": 100,
+      "level": 5,
+      "experience": 0
+    },
+    "actions": [
+      {
+        "name": "Talk to",
+        "emoji": "💬",
+        "description": "Talk to the character"        
+      },
+      {
+        "name": "Examine",
+        "emoji": "👀",
+        "description": "Examine the character"
+      },
+      {
+        "name": "Challenge",
+        "emoji": "⚔️",
+        "description": "Challenge the character to a duel"
+      }
+    ],
+    "createdAt": "2023-01-01T00:00:00Z",
+    "updatedAt": "2023-01-01T00:00:00Z"
+  }
+] 

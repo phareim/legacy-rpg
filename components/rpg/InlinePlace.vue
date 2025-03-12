@@ -1,6 +1,7 @@
 <!-- InlinePlace.vue -->
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useNuxtApp } from '#app'
 
 interface Props {
   name: string,
@@ -13,6 +14,7 @@ const emit = defineEmits<{
   (e: 'action', command: string): void
 }>()
 
+const { $firebase } = useNuxtApp()
 const place = ref<any | null>(null)
 const isLoading = ref(true)
 const showActions = ref(false)
@@ -20,33 +22,30 @@ const showActions = ref(false)
 // Fetch place data from Firebase
 async function fetchPlace() {
   try {
-    // TBD
-    place.value = {
-      name: props.name,
-      description: 'The pond looks clean and inviting.',
-      type: 'location',
-      properties: {},
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      actions: [
-        {
-          name: 'Examine',
-          emoji: '👀',
-          description: 'Examine the place'
-        },
-        {
-          name: 'Go to',
-          emoji: '🚶',
-          description: 'Go to the place'
-        },
-        {
-          name: 'Take a bath in',
-          emoji: '🛁',
-          description: 'Take a bath'
-        },
-        
-      ]
-    } 
+    place.value = await $firebase.getPlaceByName(props.name);
+    if (!place.value) {
+      // Fallback if place not found in data
+      place.value = {
+        name: props.name,
+        description: 'A mysterious place...',
+        type: 'location',
+        properties: {},
+        actions: [
+          {
+            name: 'Examine',
+            emoji: '👀',
+            description: 'Examine the place'
+          },
+          {
+            name: 'Go to',
+            emoji: '🚶',
+            description: 'Go to the place'
+          }
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    }
   } finally {
     isLoading.value = false
   }
@@ -84,7 +83,7 @@ const availableActions = computed(() => {
           v-for="action in availableActions" 
           :key="action.name"
           class="action-btn"
-          :title="action.label"
+          :title="action.description"
           @click.stop="handleAction(action.name)"
         >
           {{ action.emoji }}

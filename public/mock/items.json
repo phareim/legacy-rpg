@@ -1,0 +1,106 @@
+[
+  {
+    "id": "potion",
+    "name": "Health Potion",
+    "description": "A small vial containing a red liquid that heals wounds when consumed.",
+    "type": "consumable",
+    "properties": {
+      "healAmount": 20,
+      "value": 10,
+      "weight": 0.2
+    },
+    "actions": [
+      {
+        "name": "Take",
+        "emoji": "🤚",
+        "description": "Take the item"
+      }, 
+      {
+        "name": "Examine",
+        "emoji": "👀",
+        "description": "Examine the item"
+      },
+      {
+        "name": "Use",
+        "emoji": "🔧",
+        "description": "Use the item"
+      },
+      {
+        "name": "Drop",
+        "emoji": "💦",
+        "description": "Drop the item"
+      }
+    ],
+    "createdAt": "2023-01-01T00:00:00Z",
+    "updatedAt": "2023-01-01T00:00:00Z"
+  },
+  {
+    "id": "sword",
+    "name": "Iron Sword",
+    "description": "A simple but sturdy iron sword, suitable for combat.",
+    "type": "weapon",
+    "properties": {
+      "damage": 5,
+      "value": 25,
+      "weight": 3
+    },
+    "actions": [
+      {
+        "name": "Take",
+        "emoji": "🤚",
+        "description": "Take the item"
+      }, 
+      {
+        "name": "Examine",
+        "emoji": "👀",
+        "description": "Examine the item"
+      },
+      {
+        "name": "Equip",
+        "emoji": "🛡️",
+        "description": "Equip the item"
+      },
+      {
+        "name": "Drop",
+        "emoji": "💦",
+        "description": "Drop the item"
+      }
+    ],
+    "createdAt": "2023-01-01T00:00:00Z",
+    "updatedAt": "2023-01-01T00:00:00Z"
+  },
+  {
+    "id": "map",
+    "name": "Old Map",
+    "description": "A worn parchment map with mysterious markings.",
+    "type": "misc",
+    "properties": {
+      "value": 5,
+      "weight": 0.1
+    },
+    "actions": [
+      {
+        "name": "Take",
+        "emoji": "🤚",
+        "description": "Take the item"
+      }, 
+      {
+        "name": "Examine",
+        "emoji": "👀",
+        "description": "Examine the item"
+      },
+      {
+        "name": "Use",
+        "emoji": "🔧",
+        "description": "Use the item"
+      },
+      {
+        "name": "Drop",
+        "emoji": "💦",
+        "description": "Drop the item"
+      }
+    ],
+    "createdAt": "2023-01-01T00:00:00Z",
+    "updatedAt": "2023-01-01T00:00:00Z"
+  }
+] 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtPage />
+    <h1>Legacy RPG</h1>
   </div>
 </template>
 

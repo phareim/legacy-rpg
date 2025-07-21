@@ -1,5 +1,6 @@
 import type { Player, Place, GameState, ParsedCommand } from '~/types/game'
 import { FirebaseService } from './firebaseService'
+import { AIService } from './aiService'
 
 export interface CommandResult {
   success: boolean
@@ -19,7 +20,7 @@ export class WorldStateManager {
         case 'move':
           return await this.handleMovement(command, currentState)
         case 'look':
-          return this.handleLook(currentState)
+          return await this.handleLook(currentState)
         case 'examine':
           return await this.handleExamine(command, currentState)
         case 'take':
@@ -60,11 +61,22 @@ export class WorldStateManager {
     }
 
     // Load current location
-    const currentLocation = await FirebaseService.getOrCreateLocation(
+    let currentLocation = await FirebaseService.getOrCreateLocation(
       player.location.world, 
       player.location.x, 
       player.location.y
     )
+
+    // If location was just created (basic template), enhance with AI
+    if (currentLocation.description.includes('uncharted lands')) {
+      currentLocation = await AIService.generateNewLocation(
+        player.location.world,
+        player.location.x,
+        player.location.y,
+        player.history
+      )
+      await FirebaseService.saveLocation(player.location.world, currentLocation)
+    }
     
     return { player, currentLocation }
   }
@@ -114,21 +126,49 @@ export class WorldStateManager {
     await FirebaseService.savePlayer(updatedPlayer)
     await FirebaseService.addToPlayerHistory(playerName, `Moved ${command.direction} to ${newLocation.name}`)
 
+    const basicMessage = `You move ${command.direction} to ${newLocation.name}.\n\n${newLocation.description}`
+    const gameState = { player: updatedPlayer, currentLocation: newLocation }
+
+    // Generate enhanced narrative with AI
+    const enhancedMessage = await AIService.generateNarrative(command, gameState, basicMessage)
+
+    // Check for evolution triggers
+    const evolutions = await AIService.evaluateEvolutionTriggers(command, gameState, basicMessage)
+    let finalMessage = enhancedMessage
+
+    // Process any evolutions
+    for (const evolution of evolutions) {
+      if (evolution.shouldEvolve && evolution.evolvedEntity && evolution.evolutionNarrative) {
+        // Update the location in Firebase
+        await FirebaseService.saveLocation(newLocation.coordinates.world || 'main', evolution.evolvedEntity)
+        
+        // Add evolution narrative
+        finalMessage += `\n\n${evolution.evolutionNarrative}`
+        
+        // Update game state
+        gameState.currentLocation = evolution.evolvedEntity
+        
+        // Record in player history
+        await FirebaseService.addToPlayerHistory(playerName, `Witnessed evolution: ${evolution.evolutionNarrative}`)
+      }
+    }
+
     return {
       success: true,
-      message: `You move ${command.direction} to ${newLocation.name}.\n\n${newLocation.description}`,
-      gameState: {
-        player: updatedPlayer,
-        currentLocation: newLocation
-      }
+      message: finalMessage,
+      gameState
     }
   }
 
-  private static handleLook(gameState: GameState): CommandResult {
-    const { currentLocation } = gameState
+  private static async handleLook(gameState: GameState): Promise<CommandResult> {
+    const { currentLocation, player } = gameState
+    
+    // Generate dynamic description with AI
+    const enhancedDescription = await AIService.generateLocationDescription(currentLocation, gameState)
+    
     return {
       success: true,
-      message: `${currentLocation.name}\n\n${currentLocation.description}`,
+      message: `${currentLocation.name}\n\n${enhancedDescription}`,
       gameState
     }
   }
@@ -148,7 +188,7 @@ export class WorldStateManager {
 
     // Check if examining the location itself
     if (target === currentLocation.name.toLowerCase() || target === 'room' || target === 'area') {
-      return this.handleLook(gameState)
+      return await this.handleLook(gameState)
     }
 
     // Check objects in location
@@ -240,10 +280,11 @@ export class WorldStateManager {
       }
     }
 
-    const { currentLocation } = gameState
+    const { currentLocation, player } = gameState
     const target = command.target.toLowerCase()
 
-    if (!currentLocation.npcs.some(npc => npc.toLowerCase().includes(target))) {
+    const npcName = currentLocation.npcs.find(npc => npc.toLowerCase().includes(target))
+    if (!npcName) {
       return {
         success: false,
         message: `There is no "${command.target}" here to talk to.`,
@@ -251,10 +292,35 @@ export class WorldStateManager {
       }
     }
 
-    // TODO: Implement conversation system
+    // Load NPC from Firebase
+    let npc = await FirebaseService.getNPC(npcName)
+    if (!npc) {
+      // Create basic NPC if it doesn't exist
+      npc = {
+        name: npcName,
+        description: `A mysterious figure known as ${npcName}.`,
+        location: { world: currentLocation.coordinates.world || 'main', x: currentLocation.coordinates.x, y: currentLocation.coordinates.y },
+        inventory: {},
+        conversation_id: `${npcName.toLowerCase().replace(/\s+/g, '_')}_conversation`,
+        memory: [],
+        evolution_trigger: `When they form a meaningful connection with a traveler`
+      }
+      await FirebaseService.saveNPC(npc)
+    }
+
+    // Generate AI response
+    const response = await AIService.generateNPCResponse(npc, player, npc.memory.slice(-3))
+    
+    // Update NPC memory
+    npc.memory.push(`Player ${player.name}: talked to me`)
+    await FirebaseService.saveNPC(npc)
+
+    // Add to player history
+    await FirebaseService.addToPlayerHistory(player.name, `Talked to ${npcName}`)
+
     return {
       success: true,
-      message: `You approach ${command.target}, but they seem busy right now.`,
+      message: `You speak with ${npcName}.\n\n"${response}"`,
       gameState
     }
   }

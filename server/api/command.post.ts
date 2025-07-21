@@ -1,3 +1,6 @@
+import { CommandParser } from '~/server/utils/commandParser'
+import { WorldStateManager } from '~/server/utils/worldStateManager'
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const { command, playerName = 'player' } = body
@@ -10,21 +13,21 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // TODO: Implement command parsing and processing
-    // For now, return a basic response structure
-    const response = {
-      success: true,
-      message: `Command "${command}" received for player "${playerName}"`,
-      gameState: {
-        playerName,
-        location: { world: 'main', x: 0, y: 0 },
-        inventory: {},
-        command: command.toLowerCase().trim()
-      }
-    }
-
-    return response
+    // Parse the command
+    const parsedCommand = CommandParser.parse(command)
+    
+    // Execute the command
+    const result = await WorldStateManager.executeCommand(parsedCommand, playerName)
+    
+    return result
   } catch (error) {
+    if (error instanceof Error && error.message.includes('command') || error instanceof Error && error.message.includes('direction')) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: error.message
+      })
+    }
+    
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to process command'

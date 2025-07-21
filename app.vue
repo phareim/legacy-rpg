@@ -1,11 +1,14 @@
 <template>
-  <div>
-    <h1>Legacy RPG</h1>
+  <div class="min-h-screen bg-stone-900 text-amber-100 font-mono">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+      <GameInterface />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { useNuxtApp } from '#app'
-
-const { $firebase } = useNuxtApp()
+// Set page title
+useHead({
+  title: 'Legacy RPG - A World That Evolves'
+})
 </script>

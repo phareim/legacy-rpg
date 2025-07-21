@@ -4,6 +4,8 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
+  modules: ['@nuxtjs/tailwindcss'],
+
   runtimeConfig: {
     // Private keys that are exposed to the server
     veniceKey: process.env.VENICE_KEY,

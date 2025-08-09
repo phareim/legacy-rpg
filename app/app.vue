@@ -19,7 +19,7 @@
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:wght@300;400;700&family=Playwrite+AU+SA&display=swap');
 
 body {
   background-color: #f0e8d8; /* A warm, papery color */
@@ -69,8 +69,8 @@ body {
   flex-grow: 1;
   padding: 40px;
   overflow-y: auto;
-  font-family: 'Lora', serif;
-  font-size: 1.2rem;
+  font-family: 'Playwrite AU SA', cursive;
+  font-size: 1.5rem;
   line-height: 1.8;
   color: #2c3e50;
 }
@@ -126,7 +126,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 1.1rem;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Playwrite AU SA', cursive;
   box-sizing: border-box; /* To include padding in the width */
 }
 

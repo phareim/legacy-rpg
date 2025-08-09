@@ -64,47 +64,66 @@ const commands = ref([
 ])
 
 const storyLines = ref([
-  'SYSTEM BOOT COMPLETE - NEURAL LINK ESTABLISHED',
-  'CONNECTING TO CYBERSPACE MAINFRAME...',
-  'ACCESS GRANTED - WELCOME TO THE DIGITAL UNDERGROUND',
-  'You jack into the neon-lit data stream of the corporate network. Green code cascades past your vision.',
-  'Warning: ICE detected in sector 7. Proceed with caution.',
-  'Your cyberdeck hums with electric potential. What is your next move, netrunner?'
+  'Welcome brave adventurer to the Crystal Realm!',
+  'You stand at the entrance of the ancient Dungeon of Shadows.',
+  'The stone walls are covered in mystical runes that glow with an eerie blue light.',
+  'Your leather boots echo through the cold, damp corridors.',
+  'In the distance, you hear the growl of a fearsome beast.',
+  'Your trusty sword gleams in the torchlight. What do you do?'
 ])
 
 const executeCommand = (action) => {
-  addStoryLine(`EXECUTING: ${action.toUpperCase()}`)
+  addStoryLine(`You ${action}...`)
   
-  // Cyberpunk command responses
+  // Fantasy adventure command responses
   switch(action) {
     case 'look':
-      addStoryLine('SCAN COMPLETE: Data nodes pulse with electric blue energy. Corporate firewalls shimmer like digital barriers.')
-      addStoryLine('DETECTED: 3 access ports, 1 encrypted terminal, multiple data streams.')
+      addStoryLine('The dungeon chamber is dimly lit by flickering torches.')
+      addStoryLine('Ancient stone pillars support a vaulted ceiling.')
+      addStoryLine('You see: A wooden chest, rusty armor, and mysterious symbols on the walls.')
       break
     case 'inventory':
-      addStoryLine('CYBERDECK INVENTORY LOADED:')
-      addStoryLine('- NEURAL INTERFACE v2.3 [ACTIVE]')
-      addStoryLine('- ICE BREAKER UTILITY [READY]')
-      addStoryLine('- STEALTH PROTOCOL [STANDBY]')
-      addStoryLine('- 500 CREDITS [ENCRYPTED]')
+      addStoryLine('Your adventuring pack contains:')
+      addStoryLine('⚔️ Steel Sword (+5 Attack)')
+      addStoryLine('🛡️ Leather Shield (+3 Defense)')
+      addStoryLine('🧪 Health Potion x3')
+      addStoryLine('💰 25 Gold Pieces')
+      addStoryLine('🗝️ Rusty Key')
       break
     case 'help':
-      addStoryLine('AVAILABLE SYSTEM COMMANDS:')
-      addStoryLine('LOOK - Scan current sector | INVENTORY - Check gear status')
-      addStoryLine('NAVIGATION: NORTH/SOUTH/EAST/WEST - Move through network')
-      addStoryLine('CUSTOM COMMANDS: Type any action to interface with the system')
+      addStoryLine('Available commands in your quest:')
+      addStoryLine('LOOK - Examine your surroundings')
+      addStoryLine('INVENTORY - Check your belongings')
+      addStoryLine('NORTH/SOUTH/EAST/WEST - Travel in that direction')
+      addStoryLine('Or type custom actions like "attack goblin" or "open chest"')
+      break
+    case 'north':
+      addStoryLine('You venture north through a narrow stone corridor.')
+      addStoryLine('The air grows colder and you hear echoing footsteps ahead.')
+      break
+    case 'south':
+      addStoryLine('You head south toward the dungeon entrance.')
+      addStoryLine('Faint sunlight filters through cracks in the ancient stonework.')
+      break
+    case 'east':
+      addStoryLine('Moving eastward, you discover a chamber filled with treasure chests.')
+      addStoryLine('But beware - something glows menacingly in the shadows!')
+      break
+    case 'west':
+      addStoryLine('You travel west into darker depths of the dungeon.')
+      addStoryLine('Strange runes pulse with magical energy along the walls.')
       break
     default:
-      addStoryLine(`PROCESSING: ${action.toUpperCase()}...`)
-      addStoryLine('The system responds with a cascade of green data. Neural pathways light up with digital fire.')
+      addStoryLine(`You attempt to ${action}...`)
+      addStoryLine('The ancient magic of the realm responds to your actions with mysterious energy.')
   }
 }
 
 const submitCommand = () => {
   if (userInput.value.trim()) {
-    addStoryLine(`INPUT: ${userInput.value.toUpperCase()}`)
-    addStoryLine(`SYSTEM RESPONSE: Processing command "${userInput.value}"...`)
-    addStoryLine('Data streams flicker as your neural command propagates through the network.')
+    addStoryLine(`> ${userInput.value}`)
+    addStoryLine(`You speak the words "${userInput.value}" into the mystical air...`)
+    addStoryLine('The dungeon echoes with the power of your command!')
     userInput.value = ''
   }
 }
@@ -130,13 +149,13 @@ const scrollToBottom = () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Share+Tech+Mono&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
 
 .rpg-container {
   min-height: 100vh;
-  background: #000;
+  background: linear-gradient(180deg, #1e3a8a 0%, #312e81 50%, #1e1b4b 100%);
   padding: 20px;
-  font-family: 'Courier Prime', monospace;
+  font-family: 'Press Start 2P', cursive;
   position: relative;
   overflow: hidden;
 }
@@ -152,50 +171,70 @@ const scrollToBottom = () => {
     repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 2px,
-      rgba(0, 255, 0, 0.03) 2px,
-      rgba(0, 255, 0, 0.03) 4px
+      transparent 3px,
+      rgba(255, 255, 255, 0.02) 3px,
+      rgba(255, 255, 255, 0.02) 6px
     );
   pointer-events: none;
   z-index: 1;
 }
 
 .game-window {
-  max-width: 900px;
+  max-width: 800px;
   margin: 0 auto;
-  background: #000;
-  border: 2px solid #00ff00;
+  background: #4b5563;
+  border: 4px solid #f3f4f6;
   border-radius: 0;
   box-shadow: 
-    0 0 20px rgba(0, 255, 0, 0.3),
-    inset 0 0 20px rgba(0, 255, 0, 0.1);
+    0 0 0 2px #1f2937,
+    0 8px 16px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
   position: relative;
   z-index: 2;
   overflow: hidden;
 }
 
 .game-window::before {
-  content: 'SYSTEM TERMINAL v2.1.0 - RPG INTERFACE ACTIVE';
+  content: '⚔️ LEGENDS OF THE CRYSTAL REALM ⚔️';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  background: #00ff00;
-  color: #000;
-  padding: 8px 16px;
-  font-family: 'VT323', monospace;
-  font-size: 14px;
-  font-weight: bold;
+  background: linear-gradient(90deg, #7c3aed 0%, #a855f7 50%, #7c3aed 100%);
+  color: #fff;
+  padding: 12px 16px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  text-align: center;
+  text-shadow: 2px 2px 0px #000;
   z-index: 3;
+  border-bottom: 2px solid #f3f4f6;
 }
 
 .story-text {
   height: 400px;
   overflow-y: auto;
   padding: 50px 20px 20px 20px;
-  background: #000;
-  border-bottom: 2px solid #00ff00;
+  background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+  border-bottom: 4px solid #f3f4f6;
   position: relative;
+}
+
+.story-text::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 15px,
+      rgba(156, 163, 175, 0.1) 16px
+    );
+  pointer-events: none;
 }
 
 .text-content {
@@ -204,188 +243,160 @@ const scrollToBottom = () => {
 }
 
 .story-line {
-  margin: 0 0 8px 0;
-  line-height: 1.4;
-  color: #00ff00;
-  font-size: 14px;
-  font-family: 'Share Tech Mono', monospace;
-  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-  animation: textGlow 2s ease-in-out infinite alternate;
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  color: #f9fafb;
+  font-size: 11px;
+  font-family: 'Press Start 2P', cursive;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+  letter-spacing: 1px;
 }
 
 .story-line:before {
-  content: '> ';
-  color: #00ff00;
-  font-weight: bold;
-}
-
-@keyframes textGlow {
-  from { text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); }
-  to { text-shadow: 0 0 10px rgba(0, 255, 0, 0.8), 0 0 15px rgba(0, 255, 0, 0.3); }
+  content: '★ ';
+  color: #fbbf24;
+  margin-right: 4px;
 }
 
 .command-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  padding: 15px 20px;
-  background: #000;
-  border-bottom: 2px solid #00ff00;
+  gap: 8px;
+  padding: 16px 20px;
+  background: linear-gradient(145deg, #374151 0%, #1f2937 100%);
+  border-bottom: 4px solid #f3f4f6;
 }
 
 .command-btn {
-  padding: 8px 16px;
-  background: #000;
-  border: 2px solid #00ff00;
+  padding: 8px 12px;
+  background: linear-gradient(145deg, #dc2626 0%, #b91c1c 100%);
+  border: 2px solid #fef2f2;
   border-radius: 0;
-  color: #00ff00;
-  font-family: 'VT323', monospace;
-  font-size: 16px;
-  font-weight: bold;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
   text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  box-shadow: 
+    0 4px 0px #7f1d1d,
+    0 6px 8px rgba(0, 0, 0, 0.3);
   position: relative;
+  letter-spacing: 0.5px;
 }
 
 .command-btn:hover {
-  background: #00ff00;
-  color: #000;
+  background: linear-gradient(145deg, #ef4444 0%, #dc2626 100%);
+  transform: translateY(1px);
   box-shadow: 
-    0 0 20px rgba(0, 255, 0, 0.8),
-    inset 0 0 10px rgba(0, 0, 0, 0.2);
-  transform: scale(1.05);
+    0 3px 0px #7f1d1d,
+    0 5px 6px rgba(0, 0, 0, 0.3);
+  animation: buttonBounce 0.3s ease-in-out;
 }
 
 .command-btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
-}
-
-.command-btn::before {
-  content: '[';
-  margin-right: 4px;
-}
-
-.command-btn::after {
-  content: ']';
-  margin-left: 4px;
+  transform: translateY(3px);
+  box-shadow: 
+    0 1px 0px #7f1d1d,
+    0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .input-area {
   display: flex;
-  padding: 20px;
-  background: #000;
-  gap: 15px;
+  padding: 16px 20px;
+  background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+  gap: 12px;
   align-items: center;
 }
 
 .input-area::before {
-  content: 'CMD>';
-  color: #00ff00;
-  font-family: 'VT323', monospace;
-  font-size: 18px;
-  font-weight: bold;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+  content: '>';
+  color: #fbbf24;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 12px;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
 }
 
 .command-input {
   flex: 1;
   padding: 12px 16px;
-  background: #000;
-  border: 2px solid #00ff00;
+  background: linear-gradient(145deg, #4b5563 0%, #374151 100%);
+  border: 3px solid #f3f4f6;
   border-radius: 0;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 16px;
-  color: #00ff00;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #f9fafb;
   box-shadow: 
-    inset 0 0 10px rgba(0, 255, 0, 0.1),
-    0 0 10px rgba(0, 255, 0, 0.3);
-  caret-color: #00ff00;
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  caret-color: #fbbf24;
+  letter-spacing: 1px;
 }
 
 .command-input:focus {
   outline: none;
-  border-color: #00ff00;
+  border-color: #fbbf24;
   box-shadow: 
-    inset 0 0 10px rgba(0, 255, 0, 0.2),
-    0 0 20px rgba(0, 255, 0, 0.6);
-  animation: inputPulse 1s ease-in-out infinite alternate;
-}
-
-@keyframes inputPulse {
-  from { box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2), 0 0 20px rgba(0, 255, 0, 0.6); }
-  to { box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.3), 0 0 30px rgba(0, 255, 0, 0.8); }
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(251, 191, 36, 0.5);
 }
 
 .command-input::placeholder {
-  color: #008800;
+  color: #9ca3af;
   opacity: 0.7;
 }
 
 .submit-btn {
-  padding: 12px 20px;
-  background: #000;
-  border: 2px solid #00ff00;
+  padding: 12px 16px;
+  background: linear-gradient(145deg, #059669 0%, #047857 100%);
+  border: 3px solid #fef2f2;
   border-radius: 0;
-  color: #00ff00;
-  font-family: 'VT323', monospace;
-  font-size: 16px;
-  font-weight: bold;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
   text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  box-shadow: 
+    0 4px 0px #064e3b,
+    0 6px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .submit-btn:hover {
-  background: #00ff00;
-  color: #000;
+  background: linear-gradient(145deg, #10b981 0%, #059669 100%);
+  transform: translateY(1px);
   box-shadow: 
-    0 0 20px rgba(0, 255, 0, 0.8),
-    inset 0 0 10px rgba(0, 0, 0, 0.2);
-  transform: scale(1.05);
+    0 3px 0px #064e3b,
+    0 5px 6px rgba(0, 0, 0, 0.3);
 }
 
 .submit-btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
-}
-
-.submit-btn::before {
-  content: '>>> ';
+  transform: translateY(3px);
+  box-shadow: 
+    0 1px 0px #064e3b,
+    0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Custom scrollbar */
 .story-text::-webkit-scrollbar {
-  width: 12px;
+  width: 14px;
 }
 
 .story-text::-webkit-scrollbar-track {
-  background: #000;
-  border: 1px solid #00ff00;
+  background: #374151;
+  border: 2px solid #f3f4f6;
 }
 
 .story-text::-webkit-scrollbar-thumb {
-  background: #00ff00;
+  background: linear-gradient(145deg, #7c3aed 0%, #5b21b6 100%);
   border-radius: 0;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .story-text::-webkit-scrollbar-thumb:hover {
-  background: #00ff00;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
-}
-
-/* CRT Monitor effect */
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.98; }
-}
-
-.game-window {
-  animation: flicker 3s linear infinite;
+  background: linear-gradient(145deg, #8b5cf6 0%, #7c3aed 100%);
 }
 
 .cursor-line {
@@ -393,36 +404,38 @@ const scrollToBottom = () => {
 }
 
 .blinking-cursor {
-  color: #00ff00;
-  font-family: 'VT323', monospace;
-  font-size: 16px;
+  color: #fbbf24;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 11px;
   opacity: 0;
   transition: opacity 0.1s ease;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
 }
 
 .blinking-cursor.visible {
   opacity: 1;
 }
 
-/* Additional retro effects */
-.rpg-container::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at center, transparent 70%, rgba(0, 0, 0, 0.3) 100%);
-  pointer-events: none;
-  z-index: 3;
+/* NES-style button animations */
+@keyframes buttonBounce {
+  0%, 100% { transform: translateY(1px); }
+  50% { transform: translateY(-1px); }
 }
 
-/* Enhance the text glow for better readability */
-.story-line {
-  text-shadow: 
-    0 0 5px rgba(0, 255, 0, 0.5),
-    0 0 10px rgba(0, 255, 0, 0.3),
-    0 0 15px rgba(0, 255, 0, 0.1);
+/* Add some sparkle to the title */
+@keyframes titleGlow {
+  0%, 100% { text-shadow: 2px 2px 0px #000, 0 0 10px rgba(124, 58, 237, 0.5); }
+  50% { text-shadow: 2px 2px 0px #000, 0 0 20px rgba(124, 58, 237, 0.8), 0 0 30px rgba(168, 85, 247, 0.3); }
+}
+
+.game-window::before {
+  animation: titleGlow 2s ease-in-out infinite;
+}
+
+/* Pixel-perfect NES styling */
+* {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 </style>

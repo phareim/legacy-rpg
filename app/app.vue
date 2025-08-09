@@ -12,6 +12,9 @@
           >
             {{ line }}
           </p>
+          <p class="story-line cursor-line">
+            <span class="blinking-cursor" :class="{ 'visible': showCursor }">█</span>
+          </p>
         </div>
       </div>
 
@@ -61,35 +64,47 @@ const commands = ref([
 ])
 
 const storyLines = ref([
-  'Welcome to the Ancient Library of Mysteries...',
-  'You find yourself standing before towering bookshelves filled with leather-bound tomes. The air smells of old parchment and forgotten knowledge.',
-  'Dust motes dance in the amber light filtering through stained glass windows.',
-  'What would you like to do?'
+  'SYSTEM BOOT COMPLETE - NEURAL LINK ESTABLISHED',
+  'CONNECTING TO CYBERSPACE MAINFRAME...',
+  'ACCESS GRANTED - WELCOME TO THE DIGITAL UNDERGROUND',
+  'You jack into the neon-lit data stream of the corporate network. Green code cascades past your vision.',
+  'Warning: ICE detected in sector 7. Proceed with caution.',
+  'Your cyberdeck hums with electric potential. What is your next move, netrunner?'
 ])
 
 const executeCommand = (action) => {
-  addStoryLine(`> ${action}`)
+  addStoryLine(`EXECUTING: ${action.toUpperCase()}`)
   
-  // Simple command responses for demo
+  // Cyberpunk command responses
   switch(action) {
     case 'look':
-      addStoryLine('You see ancient books, flickering candles, and mysterious shadows dancing on the walls.')
+      addStoryLine('SCAN COMPLETE: Data nodes pulse with electric blue energy. Corporate firewalls shimmer like digital barriers.')
+      addStoryLine('DETECTED: 3 access ports, 1 encrypted terminal, multiple data streams.')
       break
     case 'inventory':
-      addStoryLine('You carry: a worn leather satchel, a brass key, and a mysterious scroll.')
+      addStoryLine('CYBERDECK INVENTORY LOADED:')
+      addStoryLine('- NEURAL INTERFACE v2.3 [ACTIVE]')
+      addStoryLine('- ICE BREAKER UTILITY [READY]')
+      addStoryLine('- STEALTH PROTOCOL [STANDBY]')
+      addStoryLine('- 500 CREDITS [ENCRYPTED]')
       break
     case 'help':
-      addStoryLine('Available commands: look, inventory, north, south, east, west, or type custom commands.')
+      addStoryLine('AVAILABLE SYSTEM COMMANDS:')
+      addStoryLine('LOOK - Scan current sector | INVENTORY - Check gear status')
+      addStoryLine('NAVIGATION: NORTH/SOUTH/EAST/WEST - Move through network')
+      addStoryLine('CUSTOM COMMANDS: Type any action to interface with the system')
       break
     default:
-      addStoryLine(`You attempt to ${action}... The ancient library seems to whisper in response.`)
+      addStoryLine(`PROCESSING: ${action.toUpperCase()}...`)
+      addStoryLine('The system responds with a cascade of green data. Neural pathways light up with digital fire.')
   }
 }
 
 const submitCommand = () => {
   if (userInput.value.trim()) {
-    addStoryLine(`> ${userInput.value}`)
-    addStoryLine(`You speak the words "${userInput.value}" into the mystical air...`)
+    addStoryLine(`INPUT: ${userInput.value.toUpperCase()}`)
+    addStoryLine(`SYSTEM RESPONSE: Processing command "${userInput.value}"...`)
+    addStoryLine('Data streams flicker as your neural command propagates through the network.')
     userInput.value = ''
   }
 }
@@ -101,6 +116,12 @@ const addStoryLine = (line) => {
   })
 }
 
+// Add blinking cursor effect
+const showCursor = ref(true)
+setInterval(() => {
+  showCursor.value = !showCursor.value
+}, 500)
+
 const scrollToBottom = () => {
   if (storyContainer.value) {
     storyContainer.value.scrollTop = storyContainer.value.scrollHeight
@@ -109,66 +130,72 @@ const scrollToBottom = () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:wght@300;400;700&family=Playwrite+AU+SA&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Share+Tech+Mono&family=VT323&display=swap');
 
 .rpg-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #2d1810 0%, #4a2c1a 100%);
+  background: #000;
   padding: 20px;
-  font-family: 'Lora', serif;
-}
-
-.game-window {
-  max-width: 800px;
-  margin: 0 auto;
-  background: linear-gradient(145deg, #f4e5d3 0%, #e8d5b7 100%);
-  border: 8px solid #8b4513;
-  border-radius: 15px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    inset 0 2px 8px rgba(255, 255, 255, 0.2),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Courier Prime', monospace;
   position: relative;
   overflow: hidden;
 }
 
-.game-window::before {
+.rpg-container::before {
   content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 0, 0.03) 2px,
+      rgba(0, 255, 0, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.game-window {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #000;
+  border: 2px solid #00ff00;
+  border-radius: 0;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 0, 0.3),
+    inset 0 0 20px rgba(0, 255, 0, 0.1);
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.game-window::before {
+  content: 'SYSTEM TERMINAL v2.1.0 - RPG INTERFACE ACTIVE';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(101, 67, 33, 0.03) 0%, transparent 50%);
-  pointer-events: none;
+  background: #00ff00;
+  color: #000;
+  padding: 8px 16px;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 3;
 }
 
 .story-text {
   height: 400px;
   overflow-y: auto;
-  padding: 30px;
-  background: linear-gradient(145deg, #faf6f0 0%, #f0e6d6 100%);
-  border-bottom: 3px solid #8b4513;
+  padding: 50px 20px 20px 20px;
+  background: #000;
+  border-bottom: 2px solid #00ff00;
   position: relative;
-}
-
-.story-text::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 24px,
-      rgba(139, 69, 19, 0.1) 25px
-    );
-  pointer-events: none;
 }
 
 .text-content {
@@ -177,141 +204,225 @@ const scrollToBottom = () => {
 }
 
 .story-line {
-  margin: 0 0 15px 0;
-  line-height: 1.6;
-  color: #2d1810;
-  font-size: 16px;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  color: #00ff00;
+  font-size: 14px;
+  font-family: 'Share Tech Mono', monospace;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  animation: textGlow 2s ease-in-out infinite alternate;
 }
 
-.story-line:first-letter {
-  font-size: 1.2em;
+.story-line:before {
+  content: '> ';
+  color: #00ff00;
   font-weight: bold;
-  color: #8b4513;
+}
+
+@keyframes textGlow {
+  from { text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); }
+  to { text-shadow: 0 0 10px rgba(0, 255, 0, 0.8), 0 0 15px rgba(0, 255, 0, 0.3); }
 }
 
 .command-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 20px 30px;
-  background: linear-gradient(145deg, #e8d5b7 0%, #d4c1a4 100%);
-  border-bottom: 2px solid #8b4513;
+  gap: 10px;
+  padding: 15px 20px;
+  background: #000;
+  border-bottom: 2px solid #00ff00;
 }
 
 .command-btn {
   padding: 8px 16px;
-  background: linear-gradient(145deg, #8b4513 0%, #a0522d 100%);
-  border: 2px solid #654321;
-  border-radius: 6px;
-  color: #f4e5d3;
-  font-family: 'Playwrite AU SA', cursive;
-  font-size: 14px;
+  background: #000;
+  border: 2px solid #00ff00;
+  border-radius: 0;
+  color: #00ff00;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  position: relative;
 }
 
 .command-btn:hover {
-  background: linear-gradient(145deg, #a0522d 0%, #cd853f 100%);
-  transform: translateY(-1px);
+  background: #00ff00;
+  color: #000;
   box-shadow: 
-    0 6px 12px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.3);
+    0 0 20px rgba(0, 255, 0, 0.8),
+    inset 0 0 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
 }
 
 .command-btn:active {
-  transform: translateY(0px);
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transform: scale(0.95);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+}
+
+.command-btn::before {
+  content: '[';
+  margin-right: 4px;
+}
+
+.command-btn::after {
+  content: ']';
+  margin-left: 4px;
 }
 
 .input-area {
   display: flex;
-  padding: 20px 30px;
-  background: linear-gradient(145deg, #d4c1a4 0%, #c2af92 100%);
-  gap: 10px;
+  padding: 20px;
+  background: #000;
+  gap: 15px;
+  align-items: center;
+}
+
+.input-area::before {
+  content: 'CMD>';
+  color: #00ff00;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
 }
 
 .command-input {
   flex: 1;
   padding: 12px 16px;
-  background: linear-gradient(145deg, #faf6f0 0%, #f0e6d6 100%);
-  border: 3px solid #8b4513;
-  border-radius: 8px;
-  font-family: 'Lora', serif;
+  background: #000;
+  border: 2px solid #00ff00;
+  border-radius: 0;
+  font-family: 'Share Tech Mono', monospace;
   font-size: 16px;
-  color: #2d1810;
+  color: #00ff00;
   box-shadow: 
-    inset 0 2px 6px rgba(0, 0, 0, 0.1),
-    0 1px 3px rgba(255, 255, 255, 0.3);
+    inset 0 0 10px rgba(0, 255, 0, 0.1),
+    0 0 10px rgba(0, 255, 0, 0.3);
+  caret-color: #00ff00;
 }
 
 .command-input:focus {
   outline: none;
-  border-color: #cd853f;
+  border-color: #00ff00;
   box-shadow: 
-    inset 0 2px 6px rgba(0, 0, 0, 0.1),
-    0 0 10px rgba(205, 133, 63, 0.3);
+    inset 0 0 10px rgba(0, 255, 0, 0.2),
+    0 0 20px rgba(0, 255, 0, 0.6);
+  animation: inputPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes inputPulse {
+  from { box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2), 0 0 20px rgba(0, 255, 0, 0.6); }
+  to { box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.3), 0 0 30px rgba(0, 255, 0, 0.8); }
 }
 
 .command-input::placeholder {
-  color: #8b6f47;
-  font-style: italic;
+  color: #008800;
+  opacity: 0.7;
 }
 
 .submit-btn {
   padding: 12px 20px;
-  background: linear-gradient(145deg, #8b4513 0%, #a0522d 100%);
-  border: 3px solid #654321;
-  border-radius: 8px;
-  color: #f4e5d3;
-  font-family: 'Playwrite AU SA', cursive;
+  background: #000;
+  border: 2px solid #00ff00;
+  border-radius: 0;
+  color: #00ff00;
+  font-family: 'VT323', monospace;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
 }
 
 .submit-btn:hover {
-  background: linear-gradient(145deg, #a0522d 0%, #cd853f 100%);
-  transform: translateY(-1px);
+  background: #00ff00;
+  color: #000;
   box-shadow: 
-    0 6px 12px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.3);
+    0 0 20px rgba(0, 255, 0, 0.8),
+    inset 0 0 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
 }
 
 .submit-btn:active {
-  transform: translateY(0px);
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transform: scale(0.95);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
 }
 
-/* Scrollbar styling */
+.submit-btn::before {
+  content: '>>> ';
+}
+
+/* Custom scrollbar */
 .story-text::-webkit-scrollbar {
   width: 12px;
 }
 
 .story-text::-webkit-scrollbar-track {
-  background: #d4c1a4;
-  border-radius: 6px;
+  background: #000;
+  border: 1px solid #00ff00;
 }
 
 .story-text::-webkit-scrollbar-thumb {
-  background: linear-gradient(145deg, #8b4513 0%, #a0522d 100%);
-  border-radius: 6px;
-  border: 2px solid #d4c1a4;
+  background: #00ff00;
+  border-radius: 0;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
 
 .story-text::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(145deg, #a0522d 0%, #cd853f 100%);
+  background: #00ff00;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+}
+
+/* CRT Monitor effect */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.98; }
+}
+
+.game-window {
+  animation: flicker 3s linear infinite;
+}
+
+.cursor-line {
+  margin-top: 10px;
+}
+
+.blinking-cursor {
+  color: #00ff00;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.blinking-cursor.visible {
+  opacity: 1;
+}
+
+/* Additional retro effects */
+.rpg-container::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at center, transparent 70%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Enhance the text glow for better readability */
+.story-line {
+  text-shadow: 
+    0 0 5px rgba(0, 255, 0, 0.5),
+    0 0 10px rgba(0, 255, 0, 0.3),
+    0 0 15px rgba(0, 255, 0, 0.1);
 }
 </style>

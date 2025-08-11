@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 
 const userInput = ref('')
 const storyContainer = ref(null)
@@ -135,11 +135,14 @@ const addStoryLine = (line) => {
   })
 }
 
-// Add blinking cursor effect
+// Add blinking cursor effect (only in browser)
 const showCursor = ref(true)
-setInterval(() => {
-  showCursor.value = !showCursor.value
-}, 500)
+
+onMounted(() => {
+  setInterval(() => {
+    showCursor.value = !showCursor.value
+  }, 500)
+})
 
 const scrollToBottom = () => {
   if (storyContainer.value) {

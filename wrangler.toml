@@ -1,10 +1,11 @@
 name = "legacy-rpg"
 compatibility_date = "2025-07-15"
+pages_build_output_dir = "dist"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "legacy-rpg"
-database_id = ""
+database_id = "6e3ee214-4e65-4e59-97be-1551a404d362"
 
 [[r2_buckets]]
 binding = "BUCKET"

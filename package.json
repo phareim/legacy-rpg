@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "legacy-rpg",
   "type": "module",
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
     "@nuxt/ui": "^3.3.0",
     "eslint": "^9.32.0",
     "nuxt": "^4.1.0",
+    "openai": "^4.0.0",
     "typescript": "^5.9.2",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"

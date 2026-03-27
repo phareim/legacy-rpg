@@ -1,7 +1,9 @@
 import 'dotenv/config';
 
-const DIRECTION_WORDS = ['north', 'south', 'east', 'west', 'up', 'down',
-  'forward', 'back', 'left', 'right'];
+// Cardinal directions: match anywhere (safe, unambiguous)
+const CARDINAL_DIRS = ['north', 'south', 'east', 'west'];
+// Ambiguous direction words: only match when used as standalone directions
+const AMBIGUOUS_DIRS = ['up', 'down', 'forward', 'back', 'left', 'right'];
 const DIALOGUE_WORDS = ['talk', 'speak', 'ask', 'say', 'tell', 'greet', 'chat'];
 const ITEM_WORDS = ['pick up', 'take', 'grab', 'drop', 'leave', 'give',
   'examine', 'look at', 'inspect', 'use'];
@@ -15,36 +17,48 @@ export function parseIntentFromText(input) {
     return { intent: 'ambiguous', target: null };
   }
 
-  for (const dir of DIRECTION_WORDS) {
+  // Check cardinal directions first (safe — unambiguous)
+  for (const dir of CARDINAL_DIRS) {
     if (lower.includes(dir)) {
       return { intent: 'movement', target: dir };
     }
   }
 
-  for (const word of DIALOGUE_WORDS) {
-    if (lower.startsWith(word)) {
-      const target = lower
-        .replace(new RegExp(`^${word}\\s*(to\\s+)?`), '')
-        .replace(/^(the|a|an)\s+/, '')
-        .trim() || null;
-      return { intent: 'dialogue', target };
-    }
-  }
-
+  // Check item verbs BEFORE ambiguous direction words to prevent shadowing
   for (const word of ITEM_WORDS) {
     if (lower.includes(word)) {
-      const target = lower.replace(word, '').trim() || null;
+      let target = lower.replace(word, '').trim();
+      target = target.replace(/^(the|a|an)\s+/, '').trim() || null;
       return { intent: 'item', target };
     }
   }
 
+  // Check dialogue verbs
+  for (const word of DIALOGUE_WORDS) {
+    if (lower.startsWith(word)) {
+      let target = lower.replace(new RegExp(`^${word}\\s*(to\\s+)?`), '').trim();
+      target = target.replace(/^(the|a|an)\s+/, '').trim() || null;
+      return { intent: 'dialogue', target };
+    }
+  }
+
+  // Ambiguous direction words — only when the input looks like a movement command
+  const MOVEMENT_VERBS = ['go', 'walk', 'head', 'move', 'travel', 'run', 'venture'];
+  const hasMovementVerb = MOVEMENT_VERBS.some(v => lower.startsWith(v));
+  for (const dir of AMBIGUOUS_DIRS) {
+    // Match if: input starts with direction, or movement verb is present, or direction is the whole input
+    if (lower === dir || (hasMovementVerb && lower.includes(dir))) {
+      return { intent: 'movement', target: dir };
+    }
+  }
+
+  // World action verbs
   for (const word of WORLD_ACTION_WORDS) {
     if (lower.startsWith(word)) {
       return { intent: 'world_action', target: null };
     }
   }
 
-  // Anything else with clear subject-verb structure → world_action
   return { intent: 'world_action', target: null };
 }
 
@@ -93,8 +107,9 @@ Examples:
     const match = text.match(/\{[^}]+\}/);
     if (!match) return parseIntentFromText(input);
 
+    const VALID_INTENTS = new Set(['movement', 'dialogue', 'item', 'world_action', 'ambiguous']);
     const parsed = JSON.parse(match[0]);
-    if (!parsed.intent) return parseIntentFromText(input);
+    if (!parsed.intent || !VALID_INTENTS.has(parsed.intent)) return parseIntentFromText(input);
     return { intent: parsed.intent, target: parsed.target ?? null };
   } catch {
     return parseIntentFromText(input);

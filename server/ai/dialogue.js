@@ -80,6 +80,17 @@ export async function streamDialogue(npc, playerInput, recentEvents, season, tim
       } catch {}
     }
   }
+  // Flush any remaining buffer content
+  if (buffer.trim()) {
+    const t = buffer.trim();
+    if (t.startsWith('data: ') && t !== 'data: [DONE]') {
+      try {
+        const chunk = JSON.parse(t.slice(6));
+        const delta = chunk.choices?.[0]?.delta?.content;
+        if (delta) await onChunk(delta);
+      } catch {}
+    }
+  }
 }
 
 export async function generateLocation(direction, fromLocation, season, timeOfDay) {
@@ -147,6 +158,17 @@ Write a vivid 2-3 sentence arrival description. Make it feel alive and present-t
       const t = line.trim();
       if (!t || t === 'data: [DONE]') continue;
       if (!t.startsWith('data: ')) continue;
+      try {
+        const chunk = JSON.parse(t.slice(6));
+        const delta = chunk.choices?.[0]?.delta?.content;
+        if (delta) await onChunk(delta);
+      } catch {}
+    }
+  }
+  // Flush any remaining buffer content
+  if (buffer.trim()) {
+    const t = buffer.trim();
+    if (t.startsWith('data: ') && t !== 'data: [DONE]') {
       try {
         const chunk = JSON.parse(t.slice(6));
         const delta = chunk.choices?.[0]?.delta?.content;

@@ -10,7 +10,7 @@ export function buildConsequencePrompt(player, location, action, recentEvents, s
   return `You are the world-engine of a magical forest RPG. A player has taken an action that may permanently change the world.
 
 Player: ${player.username}
-Location: ${location.data.name} — ${location.data.description}
+Location: ${location.data.name}${location.data.description ? ` — ${location.data.description}` : ''}
 Season: ${season}
 Action: "${action}"
 
@@ -21,12 +21,11 @@ Decide what actually happens and what permanently changes. Respond with ONLY val
 {
   "narrative": "2-3 sentence description of what happens, vivid and consequential",
   "changes": [
-    // Include only changes that actually apply. Types:
-    // {"type": "location_patch", "id": "${location.id}", "patch": {key: value, ...}}
-    // {"type": "npc_patch", "id": "npc_id", "patch": {key: value, ...}}
-    // {"type": "item_move", "id": "item_id", "location_id": "loc_id", "holder_id": null}
-    // {"type": "item_create", "location_id": "loc_id", "data": {name, description, ...}}
-    // {"type": "event_log", "description": "one-line summary of what happened"}
+    {"type": "location_patch", "id": "${location.id}", "patch": {}},
+    {"type": "npc_patch", "id": "npc_id", "patch": {}},
+    {"type": "item_move", "id": "item_id", "location_id": "loc_id", "holder_id": null},
+    {"type": "item_create", "location_id": "loc_id", "data": {}},
+    {"type": "event_log", "description": "one-line summary of what happened"}
   ]
 }
 

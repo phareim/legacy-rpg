@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS items (
 
 CREATE TABLE IF NOT EXISTS players (
   id TEXT PRIMARY KEY,
-  username TEXT UNIQUE,
+  username TEXT UNIQUE, -- NOT NULL omitted: upsert omits username on update-only paths, SQLite enforces NOT NULL at INSERT phase even in upserts
   created_at TEXT DEFAULT (datetime('now')),
   location_id TEXT NOT NULL,
   data TEXT NOT NULL DEFAULT '{}'

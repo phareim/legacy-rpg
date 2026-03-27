@@ -5,6 +5,8 @@ import { dirname, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+const ALLOWED_TABLES = new Set(['locations', 'npcs', 'items', 'players', 'events', 'seasons']);
+
 export function createDb(path) {
   const db = new Database(path);
   db.pragma('journal_mode = WAL');
@@ -14,12 +16,14 @@ export function createDb(path) {
   db.exec(schema);
 
   db.getById = function (table, id) {
+    if (!ALLOWED_TABLES.has(table)) throw new Error(`Invalid table: ${table}`);
     const row = this.prepare(`SELECT * FROM ${table} WHERE id = ?`).get(id);
     if (!row) return null;
     return { ...row, data: JSON.parse(row.data) };
   };
 
   db.upsert = function (table, id, data, extraFields = {}) {
+    if (!ALLOWED_TABLES.has(table)) throw new Error(`Invalid table: ${table}`);
     const extras = Object.keys(extraFields);
     const cols = ['id', 'data', ...extras].join(', ');
     const placeholders = ['?', '?', ...extras.map(() => '?')].join(', ');
@@ -38,7 +42,7 @@ export function createDb(path) {
 
   db.recentEvents = function (locationId, limit = 20) {
     return this.prepare(
-      `SELECT * FROM events WHERE location_id = ? ORDER BY created_at DESC LIMIT ?`
+      `SELECT * FROM events WHERE location_id = ? ORDER BY id DESC LIMIT ?`
     ).all(locationId, limit).map(row => ({ ...row, data: JSON.parse(row.data) }));
   };
 

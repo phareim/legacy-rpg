@@ -23,7 +23,7 @@ app.get('/health', (_req, res) => res.json({ ok: true }));
 setInterval(() => {
   const next = advanceSeason(db);
   console.log(`Season advanced to: ${next}`);
-}, SEASON_DURATION_HOURS * 60 * 60 * 1000);
+}, SEASON_DURATION_HOURS * 60 * 60 * 1000).unref();
 
 app.listen(PORT, () => {
   const season = getCurrentSeason(db);

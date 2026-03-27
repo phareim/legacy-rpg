@@ -16,7 +16,6 @@ export function createGameRouter(db) {
     const username = req.query.player;
     if (!username) return res.status(400).json({ error: 'player param required' });
 
-    seedWorld(db);
     const player = db.getOrCreatePlayer(username, STARTING_LOCATION_ID);
     const location = db.getById('locations', player.location_id);
     const season = getCurrentSeason(db);
@@ -51,7 +50,6 @@ export function createGameRouter(db) {
       return res.status(400).json({ error: 'player and input required' });
     }
 
-    seedWorld(db);
     db.getOrCreatePlayer(username, STARTING_LOCATION_ID);
 
     const season = getCurrentSeason(db);
@@ -61,9 +59,15 @@ export function createGameRouter(db) {
     res.setHeader('Transfer-Encoding', 'chunked');
     res.setHeader('X-Accel-Buffering', 'no');
 
-    const onChunk = async (chunk) => {
-      res.write(chunk);
-    };
+    const onChunk = (chunk) => new Promise((resolve, reject) => {
+      const ok = res.write(chunk);
+      if (ok) {
+        resolve();
+      } else {
+        res.once('drain', resolve);
+        res.once('error', reject);
+      }
+    });
 
     try {
       const intent = await parseIntent(input);

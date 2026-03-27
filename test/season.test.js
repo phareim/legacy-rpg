@@ -1,7 +1,7 @@
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createDb } from '../server/db.js';
-import { initSeason, getCurrentSeason, getTimeOfDay } from '../server/world/season.js';
+import { initSeason, getCurrentSeason, getTimeOfDay, advanceSeason } from '../server/world/season.js';
 
 describe('season', () => {
   let db;
@@ -35,5 +35,13 @@ describe('season', () => {
   test('getTimeOfDay returns a valid time of day string', () => {
     const tod = getTimeOfDay();
     assert.ok(['dawn', 'morning', 'afternoon', 'dusk', 'night'].includes(tod));
+  });
+
+  test('advanceSeason cycles to the next season', () => {
+    // Start fresh — insert Spring explicitly
+    db.insertSeason('Spring');
+    const next = advanceSeason(db);
+    assert.equal(next, 'Summer');
+    assert.equal(db.getSeason().name, 'Summer');
   });
 });

@@ -1,5 +1,9 @@
 export async function handleDialogue(db, username, target, input, season, timeOfDay, ai, onChunk) {
   const player = db.prepare('SELECT * FROM players WHERE username = ?').get(username);
+  if (!player) {
+    await onChunk('You do not exist in this world yet.');
+    return;
+  }
   const npcs = db.prepare('SELECT * FROM npcs WHERE location_id = ?')
     .all(player.location_id)
     .map(n => ({ ...n, data: JSON.parse(n.data) }));

@@ -2,6 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 export async function handleWorldAction(db, username, input, season, ai, onChunk) {
   const player = db.prepare('SELECT * FROM players WHERE username = ?').get(username);
+  if (!player) {
+    await onChunk('You do not exist in this world yet.');
+    return;
+  }
   const location = db.getById('locations', player.location_id);
   const recentEvents = db.recentEvents(player.location_id, 15);
 

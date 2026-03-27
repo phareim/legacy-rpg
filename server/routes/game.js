@@ -72,6 +72,18 @@ export function createGameRouter(db) {
     try {
       const intent = await parseIntent(input);
 
+      // Fast-path: look/examine actions describe the current location via Venice (no Claude)
+      const isLookAction = /^(look|examine|describe|survey|observe|check|inspect)\b/i.test(input.trim()) ||
+        input.trim().toLowerCase() === 'look around';
+
+      if (isLookAction) {
+        const player = db.getOrCreatePlayer(username, STARTING_LOCATION_ID);
+        const location = db.getById('locations', player.location_id);
+        await streamAtmosphere(location, season, timeOfDay, onChunk);
+        res.end();
+        return;
+      }
+
       if (intent.intent === 'ambiguous') {
         res.end(`You pause. What do you mean exactly? Try being more specific.`);
         return;

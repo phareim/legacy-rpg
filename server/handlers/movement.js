@@ -13,7 +13,7 @@ export async function handleMovement(db, username, direction, season, timeOfDay,
 
   if (!targetId) {
     await onChunk(`You push deeper into the wood, heading ${direction}...\n\n`);
-    targetId = await createLocation(db, player.location_id, direction, ai.generateLocation);
+    targetId = await createLocation(db, player.location_id, direction, ai.generateLocation, season, timeOfDay);
   }
 
   db.prepare('UPDATE players SET location_id = ? WHERE username = ?').run(targetId, username);

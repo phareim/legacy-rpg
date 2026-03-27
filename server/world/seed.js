@@ -31,12 +31,12 @@ export function linkLocations(db, fromId, direction, toId) {
   }
 }
 
-export async function createLocation(db, fromLocationId, direction, generateLocationFn) {
+export async function createLocation(db, fromLocationId, direction, generateLocationFn, season, timeOfDay) {
   const from = db.getById('locations', fromLocationId);
   if (!from) throw new Error(`Source location ${fromLocationId} not found`);
 
   const newId = `loc_${uuidv4().slice(0, 8)}`;
-  const locationData = await generateLocationFn(direction, from);
+  const locationData = await generateLocationFn(direction, from, season, timeOfDay);
 
   db.upsert('locations', newId, {
     ...locationData,

@@ -28,5 +28,7 @@ export function advanceSeason(db) {
   const idx = SEASONS.indexOf(current?.name ?? 'Winter');
   const next = SEASONS[(idx + 1) % SEASONS.length];
   db.insertSeason(next);
+  // Keep only the latest season row
+  db.prepare('DELETE FROM seasons WHERE id < (SELECT MAX(id) FROM seasons)').run();
   return next;
 }

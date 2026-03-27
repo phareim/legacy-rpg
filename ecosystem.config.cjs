@@ -3,6 +3,7 @@ module.exports = {
     {
       name: 'legacy-rpg',
       script: 'server/index.js',
+      cwd: '/home/petter/github/legacy-rpg',
       interpreter: 'node',
       env: {
         NODE_ENV: 'production',

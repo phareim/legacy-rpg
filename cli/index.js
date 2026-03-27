@@ -2,7 +2,7 @@
 import 'dotenv/config';
 import readline from 'node:readline';
 
-const API_BASE = process.env.API_BASE ?? 'http://localhost:3000';
+const API_BASE = process.env.API_BASE ?? 'http://localhost:3010';
 const PLAYER = process.env.PLAYER ?? process.env.USER ?? 'wanderer';
 
 function clearLine() {

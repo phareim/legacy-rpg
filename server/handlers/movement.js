@@ -1,4 +1,4 @@
-import { createLocation, STARTING_LOCATION_ID } from '../world/seed.js';
+import { createLocation } from '../world/seed.js';
 
 export async function handleMovement(db, username, direction, season, timeOfDay, ai, onChunk) {
   const player = db.prepare('SELECT * FROM players WHERE username = ?').get(username);

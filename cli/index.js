@@ -73,7 +73,9 @@ async function main() {
   try {
     const res = await sendAction('look around');
     await streamResponse(res);
-  } catch {}
+  } catch (err) {
+    console.error(`\nCould not describe your surroundings: ${err.message}`);
+  }
 
   const rl = readline.createInterface({
     input: process.stdin,

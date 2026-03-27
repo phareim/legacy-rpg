@@ -47,14 +47,18 @@ The world is a graph of **locations** connected by paths. Locations are generate
 
 ### Entities
 
-| Entity | Key fields |
-|---|---|
-| **Location** | name, description, atmosphere, connections, seasonal state |
-| **NPC** | name, personality, current location, interaction memory, per-player relationship |
-| **Item** | name, description, magical properties, current location, ownership history |
-| **Player** | username, current location, inventory, action history |
-| **Event log** | who, what, where, when (game-time), what changed — immutable, append-only |
-| **Season** | current season (Spring/Summer/Autumn/Winter), advances on real-time clock |
+| Entity | Fixed columns | Flexible |
+|---|---|---|
+| **Location** | id, type, created_at, location_id | `data` JSON — name, description, atmosphere, connections, seasonal state, any AI-invented properties |
+| **NPC** | id, type, created_at, location_id | `data` JSON — name, personality, memories, relationships, mood, any AI-invented properties |
+| **Item** | id, type, created_at, location_id, holder_id | `data` JSON — name, description, magical properties, history, any AI-invented properties |
+| **Player** | id, username, created_at, location_id | `data` JSON — inventory, preferences, action history |
+| **Event log** | id, player_id, location_id, created_at, type | `data` JSON — full event payload, what changed |
+| **Season** | id, name, started_at | — |
+
+### Key design decision — JSON columns for entities
+
+Locations, NPCs, and items each have a `data TEXT` column storing a JSON document with no fixed schema. The LLM can invent any properties it needs — a tree that bleeds silver sap, an NPC with a gambling debt, an item that hums in the presence of liars — and they're stored without any schema migration. Fixed columns (id, location_id, created_at) exist only where needed for indexing and joining. SQLite's `json_extract()` allows querying into the JSON when necessary.
 
 ### Key design decision — the event log
 
@@ -119,7 +123,7 @@ Later: a web terminal (xterm.js or similar) connects to the same API. Visually a
 |---|---|
 | CLI client | Node.js |
 | API server | Node.js + Express |
-| Database | SQLite (`better-sqlite3`) — local on server |
+| Database | SQLite (`better-sqlite3`) — local on server, JSON columns for entities |
 | Intent parsing | Cloudflare AI |
 | NPC dialogue / atmosphere | Venice AI (`VENICE_API_KEY`, OpenAI-compatible API) |
 | Consequence reasoning | Claude (Anthropic SDK) |

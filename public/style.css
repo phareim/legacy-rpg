@@ -1,0 +1,325 @@
+/* ── The Great Wood · warm paper, book serif, one crimson ──────────────────
+   Built on the Tufte Viz token contract, with a little forest flourish:
+   a drop cap on arrivals, dim ✦ legacy-marks, and a breathing map dot.    */
+
+@font-face {
+  font-family: "ET Book";
+  font-weight: 400; font-style: normal; font-display: swap;
+  src: url("fonts/et-book-roman.woff") format("woff");
+}
+@font-face {
+  font-family: "ET Book";
+  font-weight: 400; font-style: italic; font-display: swap;
+  src: url("fonts/et-book-italic.woff") format("woff");
+}
+@font-face {
+  font-family: "ET Book";
+  font-weight: 600; font-style: normal; font-display: swap;
+  src: url("fonts/et-book-semibold.woff") format("woff");
+}
+
+:root {
+  --paper:        #fbf9f4;
+  --paper-sunk:   #f4f1e9;
+  --tufte-ink:    #111111;
+  --tufte-muted:  #8a8a8a;
+  --tufte-faint:  #d8d8d4;
+  --ink-soft:     #3e3b33;
+  --ink-quiet:    #6b675d;
+  --rule:         #e7e2d8;
+  --rule-strong:  #d6cfc0;
+  --tufte-accent: #c1351d;
+  --accent-ink:   #9a2a17;
+  --accent-wash:  #f3ddd6;
+  --serif: "ET Book", Charter, "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:        #14130f;
+    --paper-sunk:   #1d1b16;
+    --tufte-ink:    #ececec;
+    --tufte-muted:  #8f8f8f;
+    --tufte-faint:  #333130;
+    --ink-soft:     #cfcabe;
+    --ink-quiet:    #9b968a;
+    --rule:         #322f29;
+    --rule-strong:  #43403a;
+    --tufte-accent: #ff6b4a;
+    --accent-ink:   #ff8a6e;
+    --accent-wash:  #2a1a14;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { height: 100%; }
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Masthead ───────────────────────────────────────────────────────────── */
+.masthead {
+  border-bottom: 1px solid var(--rule);
+  padding: 1.1rem 0 0.9rem;
+}
+.masthead-inner {
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.wordmark {
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  color: var(--tufte-ink);
+  font-variant: small-caps;
+}
+.almanac {
+  font-style: italic;
+  color: var(--ink-quiet);
+  font-size: 0.95rem;
+}
+
+/* ── Page grid: a real Tufte text column with a working margin ──────────── */
+.page {
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  display: grid;
+  grid-template-columns: minmax(0, 38rem) minmax(14rem, 18rem);
+  gap: 3.5rem;
+  align-items: start;
+}
+@media (max-width: 56rem) {
+  .page { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .margin-col { order: -1; }
+}
+
+/* ── Story column ───────────────────────────────────────────────────────── */
+.story { min-height: 12rem; }
+
+.entry { margin: 0 0 1.6rem; }
+.entry-cmd {
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  color: var(--ink-quiet);
+  font-size: 0.9rem;
+  margin: 0 0 0.35rem;
+}
+.entry-cmd::before { content: "❧ "; color: var(--tufte-muted); }
+
+.entry-text { animation: settle 0.5s ease-out; }
+.entry-text p { margin: 0 0 0.8rem; }
+.entry-text p:last-child { margin-bottom: 0; }
+
+/* The flourish: arrivals open with a drop cap. */
+.entry-text.arrival > p:first-of-type::first-letter {
+  font-size: 3.1em;
+  line-height: 0.82;
+  float: left;
+  padding: 0.05em 0.08em 0 0;
+  color: var(--tufte-ink);
+  font-weight: 600;
+}
+
+/* Legacy marks — what other wanderers left behind. The one accent. */
+.legacy-mark {
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--accent-ink);
+  margin: 0.5rem 0 0;
+}
+.legacy-mark::before { content: "✦ "; font-style: normal; }
+
+.entry-streaming::after {
+  content: "▍";
+  color: var(--tufte-accent);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes settle { from { opacity: 0.2; } to { opacity: 1; } }
+
+/* ── Prompt ─────────────────────────────────────────────────────────────── */
+.prompt {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  border-top: 1px solid var(--rule-strong);
+  padding-top: 1rem;
+  margin-top: 2rem;
+}
+.prompt-mark { color: var(--tufte-muted); }
+#prompt-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-style: italic;
+  color: var(--tufte-ink);
+  outline: none;
+  padding: 0.1rem 0;
+}
+#prompt-input::placeholder { color: var(--tufte-muted); font-style: italic; }
+#prompt-input:disabled { opacity: 0.45; }
+
+.prompt-hint {
+  font-size: 0.85rem;
+  color: var(--ink-quiet);
+  margin: 0.6rem 0 0;
+}
+.cmd, .link-btn {
+  font: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent-ink);
+  cursor: pointer;
+  font-style: italic;
+}
+.cmd:hover, .link-btn:hover { text-decoration: underline; }
+
+/* ── Margin column ──────────────────────────────────────────────────────── */
+.margin-col { font-size: 0.92rem; color: var(--ink-quiet); }
+.margin-block { border-top: 1px solid var(--rule); padding: 0.8rem 0 1rem; }
+.margin-block:first-child { border-top: none; padding-top: 0; }
+
+.margin-col h2, .margin-col h3 {
+  font-variant: small-caps;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+  color: var(--tufte-ink);
+  margin: 0 0 0.4rem;
+}
+.margin-col h3 { font-size: 0.85rem; color: var(--ink-quiet); }
+.loc-name { font-size: 1.15rem; }
+.loc-atmosphere { font-style: italic; margin: 0 0 0.6rem; }
+
+.plain-list { list-style: none; margin: 0; padding: 0; }
+.plain-list li { margin: 0.15rem 0; }
+.plain-list .empty { font-style: italic; color: var(--tufte-muted); }
+.plain-list button {
+  font: inherit; background: none; border: none; padding: 0;
+  color: var(--ink-soft); cursor: pointer; text-align: left;
+}
+.plain-list button:hover { color: var(--accent-ink); }
+
+/* ── Compass ────────────────────────────────────────────────────────────── */
+.compass {
+  display: grid;
+  grid-template-areas: ". n ." "w c e" ". s .";
+  width: 7.2rem;
+  text-align: center;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  margin: 0.3rem 0 0;
+}
+.compass .c { grid-area: c; color: var(--tufte-faint); }
+.compass button {
+  font: inherit; background: none; border: none;
+  cursor: pointer; padding: 0.1rem 0.25rem;
+}
+.compass .open { color: var(--tufte-ink); }
+.compass .open:hover { color: var(--accent-ink); }
+.compass .unknown { color: var(--tufte-muted); font-style: italic; }
+
+/* ── Map ────────────────────────────────────────────────────────────────── */
+.map-figure { margin: 0; }
+.map-figure svg { display: block; width: 100%; overflow: visible; }
+.map-figure figcaption {
+  font-size: 0.78rem; color: var(--tufte-muted);
+  font-style: italic; margin-top: 0.4rem;
+}
+.map-edge { stroke: var(--rule-strong); stroke-width: 1; }
+.map-node { fill: var(--tufte-muted); }
+.map-node.visited { fill: var(--tufte-ink); }
+.map-node.here { fill: var(--tufte-accent); animation: breathe 3s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { r: 4; } 50% { r: 5.5; } }
+.map-label {
+  font-size: 9px; fill: var(--ink-quiet); font-style: italic;
+  font-family: var(--serif);
+}
+
+/* ── Chronicle ──────────────────────────────────────────────────────────── */
+.chronicle {
+  list-style: none; margin: 0.4rem 0 0; padding: 0;
+  max-height: 18rem; overflow-y: auto;
+  font-size: 0.85rem;
+}
+.chronicle li {
+  margin: 0 0 0.55rem;
+  padding-left: 0.9rem;
+  text-indent: -0.9rem;
+}
+.chronicle .when { color: var(--tufte-muted); font-size: 0.78rem; }
+.chronicle .where { font-style: italic; color: var(--tufte-muted); }
+
+/* ── Gate ───────────────────────────────────────────────────────────────── */
+.gate[hidden] { display: none; }
+.gate {
+  position: fixed; inset: 0; z-index: 10;
+  background: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+}
+.gate-card { max-width: 26rem; text-align: center; }
+.gate-card h1 {
+  font-variant: small-caps; letter-spacing: 0.05em;
+  font-weight: 600; color: var(--tufte-ink);
+  font-size: 2rem; margin: 0 0 0.6rem;
+}
+.gate-sub { font-style: italic; color: var(--ink-quiet); margin: 0 0 1.8rem; }
+.gate-card label {
+  display: block;
+  font-variant: small-caps; letter-spacing: 0.08em;
+  font-size: 0.85rem; color: var(--ink-quiet);
+  margin-bottom: 0.4rem;
+}
+#gate-name {
+  font: inherit; font-style: italic; text-align: center;
+  color: var(--tufte-ink);
+  background: transparent;
+  border: none; border-bottom: 1px solid var(--rule-strong);
+  outline: none; padding: 0.3rem 0.5rem;
+  width: 16rem; max-width: 100%;
+}
+#gate-name:focus { border-bottom-color: var(--tufte-accent); }
+.gate-card button[type="submit"] {
+  display: block;
+  margin: 1.6rem auto 0;
+  font: inherit;
+  font-variant: small-caps; letter-spacing: 0.07em;
+  color: var(--accent-ink);
+  background: none;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  padding: 0.45rem 1.2rem;
+  cursor: pointer;
+}
+.gate-card button[type="submit"]:hover {
+  border-color: var(--tufte-accent);
+  background: var(--accent-wash);
+}
+
+/* ── Colophon ───────────────────────────────────────────────────────────── */
+.colophon {
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 2rem;
+  border-top: 1px solid var(--rule);
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  font-size: 0.8rem; font-style: italic; color: var(--tufte-muted);
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Great Wood</title>
+  <meta name="description" content="A shared magical forest where every action leaves a permanent mark.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico">
+</head>
+<body>
+
+  <!-- Name gate -->
+  <div id="gate" class="gate" hidden>
+    <div class="gate-card">
+      <h1>The Great Wood</h1>
+      <p class="gate-sub">A shared forest. Everything you do here is permanent,
+        and other wanderers will find what you leave behind.</p>
+      <form id="gate-form">
+        <label for="gate-name">You will wander as</label>
+        <input id="gate-name" type="text" maxlength="40" autocomplete="off"
+               spellcheck="false" placeholder="your name" required>
+        <button type="submit">Step beneath the branches</button>
+      </form>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <span class="wordmark">The Great Wood</span>
+      <span id="almanac" class="almanac">—</span>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="story-col">
+      <div id="story" class="story" aria-live="polite"></div>
+      <form id="prompt-form" class="prompt">
+        <span class="prompt-mark">❧</span>
+        <input id="prompt-input" type="text" autocomplete="off" spellcheck="false"
+               placeholder="speak, walk, or act — the wood is listening" maxlength="500">
+      </form>
+      <p class="prompt-hint">try <button class="cmd" type="button">look</button>
+        · <button class="cmd" type="button">go north</button>
+        · <button class="cmd" type="button">talk to Maren</button>
+        · <button class="cmd" type="button">help</button></p>
+    </section>
+
+    <aside class="margin-col">
+      <div class="margin-block">
+        <h2 id="loc-name" class="loc-name">…</h2>
+        <p id="loc-atmosphere" class="loc-atmosphere"></p>
+        <div id="compass" class="compass"></div>
+      </div>
+
+      <div class="margin-block">
+        <h3>Present</h3>
+        <ul id="present" class="plain-list"><li class="empty">no one</li></ul>
+      </div>
+
+      <div class="margin-block">
+        <h3>You carry</h3>
+        <ul id="carrying" class="plain-list"><li class="empty">nothing</li></ul>
+      </div>
+
+      <div class="margin-block">
+        <h3>The wood so far</h3>
+        <figure class="tufte-figure map-figure">
+          <svg id="map" viewBox="0 0 100 100"></svg>
+          <figcaption id="map-caption">the explored forest</figcaption>
+        </figure>
+      </div>
+
+      <div class="margin-block">
+        <h3><button id="chronicle-toggle" class="link-btn" type="button">The Chronicle ▸</button></h3>
+        <ol id="chronicle" class="chronicle" hidden></ol>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="colophon">
+    <span>every action is permanent · the world is shared</span>
+    <span id="signed-in"></span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

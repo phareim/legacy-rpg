@@ -1,28 +1,35 @@
-export async function handleDialogue(db, username, target, input, season, timeOfDay, ai, onChunk) {
-  const player = db.prepare('SELECT * FROM players WHERE username = ?').get(username);
+export async function handleDialogue(db, username, target, input, ctx, ai, onChunk) {
+  const player = db.getPlayer(username);
   if (!player) {
     await onChunk('You do not exist in this world yet.');
     return;
   }
-  const npcs = db.prepare('SELECT * FROM npcs WHERE location_id = ?')
-    .all(player.location_id)
-    .map(n => ({ ...n, data: JSON.parse(n.data) }));
 
-  const npc = npcs.find(n =>
-    n.data.name?.toLowerCase().includes(target?.toLowerCase() ?? '')
-  );
+  const npcs = db.npcsAt(player.location_id);
+  if (npcs.length === 0) {
+    await onChunk('You speak into the wood. Only the leaves answer.');
+    return;
+  }
+
+  // No explicit target with exactly one soul present — talk to them.
+  const npc = target ? db.findByName(npcs, target) : (npcs.length === 1 ? npcs[0] : null);
 
   if (!npc) {
-    await onChunk(`There is no one called "${target}" here.`);
+    if (!target) {
+      await onChunk(`Several figures are here: ${npcs.map(n => n.data.name).join(', ')}. Who do you mean?`);
+    } else {
+      await onChunk(`There is no one called "${target}" here.` +
+        (npcs.length ? ` Present: ${npcs.map(n => n.data.name).join(', ')}.` : ''));
+    }
     return;
   }
 
   const recentEvents = db.recentEvents(player.location_id, 10);
-  await ai.streamDialogue(npc, input, recentEvents, season, timeOfDay, onChunk);
+  const rumors = db.recentRumors(player.location_id, 4);
+  await ai.streamDialogue(npc, input, recentEvents, rumors, ctx, onChunk);
 
-  // Update NPC memory with this interaction summary
   const memories = npc.data.memories ?? [];
-  memories.unshift(`${username} asked: "${input.slice(0, 60)}"`);
+  memories.unshift(`${username} said: "${input.slice(0, 80)}"`);
   db.upsert('npcs', npc.id, { ...npc.data, memories: memories.slice(0, 20) },
     { location_id: npc.location_id });
 

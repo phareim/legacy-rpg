@@ -62,5 +62,7 @@ Server runs on port **3010** (3000 is occupied by `/home/petter/www/server.js`).
 
 `.env` is gitignored — copy from `.env.example`. `data/` (SQLite DB) is also
 gitignored. Note: the `ANTHROPIC_API_KEY` on Sleeper currently has **no
-credits** — the consequence engine silently falls back to Venice (logged with
-`console.warn`).
+credits** — the consequence engine falls back to Venice on the heftier
+`VENICE_WORLD_MODEL` (default `deepseek-v4-pro`), logged via `console.warn`.
+Dialogue/atmosphere/location-gen use the lighter, streaming `VENICE_MODEL`
+(default `zai-org-glm-5`).

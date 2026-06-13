@@ -89,6 +89,12 @@ function parseConsequence(text, source) {
   return sanitizeConsequence(JSON.parse(match[0]));
 }
 
+// World-actions are the heaviest reasoning task, so the Venice understudy
+// uses a heftier model than the streaming dialogue/atmosphere calls.
+function worldModel() {
+  return process.env.VENICE_WORLD_MODEL ?? 'deepseek-v4-pro';
+}
+
 // Claude is the preferred world-engine; Venice is the understudy so the
 // world keeps turning when the Anthropic key is missing or out of credits.
 export async function reasonConsequence(world) {
@@ -104,9 +110,9 @@ export async function reasonConsequence(world) {
       });
       return parseConsequence(message.content[0].text, 'Claude');
     } catch (err) {
-      console.warn(`Consequence engine: Claude unavailable (${err.message?.slice(0, 120)}); falling back to Venice`);
+      console.warn(`Consequence engine: Claude unavailable (${err.message?.slice(0, 120)}); falling back to Venice (${worldModel()})`);
     }
   }
 
-  return parseConsequence(await veniceComplete(prompt), 'Venice');
+  return parseConsequence(await veniceComplete(prompt, worldModel()), 'Venice');
 }

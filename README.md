@@ -41,7 +41,8 @@ consequences on demand.
   - Venice AI — NPC dialogue, location atmosphere, location generation
     (streaming where it matters)
   - Claude (Anthropic) — world consequence reasoning, with automatic Venice
-    fallback when the key is missing or out of credits
+    fallback (on the heftier `VENICE_WORLD_MODEL`) when the key is missing or
+    out of credits
 
 Consequence output is sanitized before it touches the database: only known
 change types, only ids the model was shown, never the map graph
@@ -83,7 +84,8 @@ npm run dev            # server on :3010
 | Var | Description |
 |-----|-------------|
 | `VENICE_API_KEY` | Venice AI key (dialogue, atmosphere, location gen) |
-| `VENICE_MODEL` | Model name (default `zai-org-glm-5`) |
+| `VENICE_MODEL` | Model for dialogue/atmosphere/location-gen (default `zai-org-glm-5`, streaming) |
+| `VENICE_WORLD_MODEL` | Heftier model for world-action consequences (default `deepseek-v4-pro`) |
 | `CF_ACCOUNT_ID` / `CLOUDFLARE_API_TOKEN` | Cloudflare AI for intent parsing (optional — falls back to regex parser) |
 | `ANTHROPIC_API_KEY` | Claude for world consequences (optional — falls back to Venice) |
 | `PORT` | Server port (default 3010) |

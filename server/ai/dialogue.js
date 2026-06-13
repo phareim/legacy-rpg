@@ -49,7 +49,7 @@ async function veniceStream(prompt, onChunk) {
   if (delta) await onChunk(delta);
 }
 
-export async function veniceComplete(prompt) {
+export async function veniceComplete(prompt, model = veniceModel()) {
   const res = await fetch(VENICE_URL, {
     method: 'POST',
     headers: {
@@ -57,7 +57,7 @@ export async function veniceComplete(prompt) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: veniceModel(),
+      model,
       messages: [{ role: 'user', content: prompt }],
       stream: false,
     }),

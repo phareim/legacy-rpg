@@ -2,6 +2,11 @@
 
 const $ = (sel) => document.querySelector(sel);
 
+// Base path the page is served under — "/" in local dev, "/wood/" behind
+// nginx. Lets every API call resolve correctly without a build step.
+const BASE = location.pathname.replace(/[^/]*$/, '');
+const api = (path) => `${BASE}api/${path}`;
+
 const story = $('#story');
 const input = $('#prompt-input');
 const store = {
@@ -44,7 +49,7 @@ async function begin() {
 /* ── State & margin column ──────────────────────────────────────────────── */
 
 async function refreshState() {
-  const res = await fetch(`/api/state?player=${encodeURIComponent(player)}`);
+  const res = await fetch(api(`state?player=${encodeURIComponent(player)}`));
   if (!res.ok) return;
   const s = await res.json();
 
@@ -129,7 +134,7 @@ async function act(command, opts = {}) {
 
   let raw = '';
   try {
-    const res = await fetch('/api/action', {
+    const res = await fetch(api('action'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ player, input: command }),
@@ -201,7 +206,7 @@ for (const btn of document.querySelectorAll('.cmd')) {
 /* ── Map ────────────────────────────────────────────────────────────────── */
 
 async function renderMap() {
-  const res = await fetch(`/api/map?player=${encodeURIComponent(player)}`);
+  const res = await fetch(api(`map?player=${encodeURIComponent(player)}`));
   if (!res.ok) return;
   const map = await res.json();
   const placed = map.locations.filter(l => l.x !== null);
@@ -269,7 +274,7 @@ $('#chronicle-toggle').addEventListener('click', async () => {
   list.hidden = !chronicleOpen;
   if (!chronicleOpen) return;
 
-  const res = await fetch('/api/chronicle?limit=25');
+  const res = await fetch(api('chronicle?limit=25'));
   if (!res.ok) return;
   const { events } = await res.json();
   list.innerHTML = '';

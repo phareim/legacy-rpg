@@ -17,6 +17,9 @@ initSeason(db);
 seedWorld(db);
 
 const app = express();
+// Behind nginx on loopback — trust X-Forwarded-For so req.ip is the real
+// client (rate limiting is keyed on it).
+app.set('trust proxy', 'loopback');
 app.use(express.json());
 app.use(express.static(join(__dirname, '../public')));
 app.use('/api', createGameRouter(db));

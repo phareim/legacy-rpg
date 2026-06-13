@@ -46,6 +46,16 @@ permanently alters the world. Web client + CLI + streaming API.
   in `intent.js`. Dialogue verbs are checked before cardinal directions so
   "talk to the spirit of the north wind" stays dialogue.
 
+## Public hosting
+
+Live at **https://sleeper.phareim.no/wood/** — nginx proxies `/wood/` → port
+3010 (prefix stripped), so the backend still sees `/`, `/api/...` etc. The web
+client derives its base path from `location.pathname` (`BASE` in `app.js`), so
+it works unchanged at both `localhost:3010/` (local dev) and `/wood/` (prod).
+The nginx `location /wood/` block lives in `/etc/nginx/sites-enabled/sleeper`
+with `proxy_buffering off` for streaming. `app.set('trust proxy', 'loopback')`
+makes the per-IP rate limiter see real client IPs behind nginx.
+
 ## Environment
 
 Server runs on port **3010** (3000 is occupied by `/home/petter/www/server.js`).

@@ -93,8 +93,10 @@ npm run dev            # server on :3010
 
 ## Playing
 
+Public: **https://sleeper.phareim.no/wood/** — pick a name and step in.
+
 ```bash
-# Web: open http://localhost:3010/ and pick a name
+# Local web: open http://localhost:3010/ and pick a name
 
 # CLI:
 PLAYER=yourname npm run cli

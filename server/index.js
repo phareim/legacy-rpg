@@ -29,6 +29,9 @@ app.get('/health', (_req, res) => res.json({ ok: true, season: getCurrentSeason(
 // Seasons advance lazily from their stored start time (see world/season.js),
 // so no timer is needed and restarts never reset the clock.
 
-app.listen(PORT, () => {
-  console.log(`Legacy RPG server running on :${PORT} | Season: ${getCurrentSeason(db)}`);
+// Loopback only; nginx proxies /wood/ (2026-09-22). HOST=0.0.0.0 for LAN dev.
+const HOST = process.env.HOST || '127.0.0.1';
+
+app.listen(PORT, HOST, () => {
+  console.log(`Legacy RPG server running on ${HOST}:${PORT} | Season: ${getCurrentSeason(db)}`);
 });

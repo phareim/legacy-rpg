@@ -58,7 +58,7 @@ makes the per-IP rate limiter see real client IPs behind nginx.
 
 ## Environment
 
-Server runs on port **3010** (3000 is occupied by `/home/petter/www/server.js`).
+Server runs on port **3010** (3000 is occupied by `/home/petter/www/server.js`), bound to `127.0.0.1` (set `HOST=0.0.0.0` for LAN dev; 2026-09-22).
 
 `.env` is gitignored — copy from `.env.example`. `data/` (SQLite DB) is also
 gitignored. Note: the `ANTHROPIC_API_KEY` on Sleeper currently has **no

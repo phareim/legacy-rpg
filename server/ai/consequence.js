@@ -62,6 +62,26 @@ const VALID_CHANGE_TYPES = new Set([
   'item_create', 'item_move', 'event_log',
 ]);
 
+// Structured output for the Claude path: the API guarantees an answer of this
+// shape, so only the Venice path parses JSON out of text.
+const str = { type: 'string' };
+const CONSEQUENCE_SCHEMA = {
+  type: 'object', additionalProperties: false, required: ['narrative', 'changes'],
+  properties: {
+    narrative: str,
+    changes: { type: 'array', items: {
+      type: 'object', additionalProperties: false, required: ['type'],
+      properties: {
+        type: { type: 'string', enum: [...VALID_CHANGE_TYPES] },
+        id: str, reason: str, description: str,
+        holder: { type: 'string', enum: ['ground', 'player'] },
+        to: { type: 'string', enum: ['ground', 'player', 'gone'] },
+        patch: { type: 'object', additionalProperties: false, properties: { description: str, atmosphere: str, mood: str } },
+        data: { type: 'object', additionalProperties: false, properties: { name: str, personality: str, description: str, mood: str } },
+      } } },
+  },
+};
+
 // Defensive pass over model output before it touches the database.
 export function sanitizeConsequence(raw) {
   const narrative = typeof raw?.narrative === 'string' && raw.narrative.trim()
@@ -106,9 +126,12 @@ export async function reasonConsequence(world) {
       const message = await client.messages.create({
         model: 'claude-sonnet-4-6',
         max_tokens: 1024,
+        output_config: { format: { type: 'json_schema', schema: CONSEQUENCE_SCHEMA } },
         messages: [{ role: 'user', content: prompt }],
       });
-      return parseConsequence(message.content[0].text, 'Claude');
+      const text = message.content.find(b => b.type === 'text')?.text;
+      if (message.stop_reason === 'refusal' || !text) throw new Error(`no answer (stop_reason ${message.stop_reason})`);
+      return sanitizeConsequence(JSON.parse(text));
     } catch (err) {
       console.warn(`Consequence engine: Claude unavailable (${err.message?.slice(0, 120)}); falling back to Venice (${worldModel()})`);
     }

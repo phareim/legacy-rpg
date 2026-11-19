@@ -91,7 +91,8 @@ npm run dev            # server on :3010
 | `PORT` | Server port (default 3010) |
 | `DB_PATH` | SQLite path (default `./data/world.db`) |
 | `SEASON_DURATION_HOURS` | Real hours per season (default 168 = one week) |
-| `ACTIONS_PER_MINUTE` | Per-player rate limit on `/api/action` (default 12) |
+| `ACTIONS_PER_MINUTE` | Per-IP rate limit on `/api/action` (default 12) |
+| `ACTIONS_PER_DAY` | Global daily cap on `/api/action` across all players, since every action costs LLM calls (default 300) |
 
 ## Playing
 

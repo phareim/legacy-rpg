@@ -24,7 +24,9 @@ Anything else — "carve my name into the oak", "sing to the moon", "build a
 cairn" — is taken seriously by the world-engine and may change this place
 forever. The world is shared: every scar you leave, other wanderers inherit.`;
 
-// Naive in-memory limiter: world-altering AI calls cost real money.
+// In-memory limiters: world-altering AI calls cost real money. Keyed on the
+// client IP alone (the player name is the caller's choice), plus a global
+// daily cap so many IPs together can't run up the bill.
 function makeLimiter(maxPerMinute = 12) {
   const hits = new Map();
   return (key) => {
@@ -33,7 +35,21 @@ function makeLimiter(maxPerMinute = 12) {
     if (recent.length >= maxPerMinute) return false;
     recent.push(now);
     hits.set(key, recent);
-    if (hits.size > 1000) hits.clear();
+    if (hits.size > 1000) {
+      for (const [k, ts] of hits) if (ts.every(t => now - t >= 60_000)) hits.delete(k);
+      if (hits.size > 1000) return false;
+    }
+    return true;
+  };
+}
+
+function makeDailyCap(maxPerDay = 300) {
+  let day = '', count = 0;
+  return () => {
+    const today = new Date().toISOString().slice(0, 10);
+    if (today !== day) { day = today; count = 0; }
+    if (count >= maxPerDay) return false;
+    count++;
     return true;
   };
 }
@@ -78,6 +94,7 @@ export function layoutMap(locations) {
 export function createGameRouter(db) {
   const router = Router();
   const allowAction = makeLimiter(Number(process.env.ACTIONS_PER_MINUTE ?? 12));
+  const allowToday = makeDailyCap(Number(process.env.ACTIONS_PER_DAY ?? 300));
 
   const worldCtx = () => {
     const season = getCurrentSeason(db);
@@ -89,7 +106,8 @@ export function createGameRouter(db) {
     const username = String(req.query.player ?? '').trim().slice(0, 40);
     if (!username) return res.status(400).json({ error: 'player param required' });
 
-    const player = db.getOrCreatePlayer(username, STARTING_LOCATION_ID);
+    // Reading state never creates a player: only an action does.
+    const player = db.getPlayer(username) ?? { username, location_id: STARTING_LOCATION_ID };
     const location = db.getById('locations', player.location_id);
     const ctx = worldCtx();
 
@@ -172,8 +190,11 @@ export function createGameRouter(db) {
     if (!username || !input) {
       return res.status(400).json({ error: 'player and input required' });
     }
-    if (!allowAction(`${req.ip}|${username}`)) {
+    if (!allowAction(req.ip)) {
       return res.status(429).json({ error: 'The forest asks for patience. Slow down.' });
+    }
+    if (!allowToday()) {
+      return res.status(429).json({ error: 'The forest sleeps for today. Come back tomorrow.' });
     }
 
     db.getOrCreatePlayer(username, STARTING_LOCATION_ID);
